@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Chamadas - QMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <div class="atual">
+            <h1>SENHA</h1>
+            <div id="senha-principal" class="senha-grande">---</div>
+            <div id="setor-principal" class="setor-grande">Aguardando...</div>
+            <div id="tipo-principal" style="font-size: 2rem; color: #7f8c8d;">---</div>
+        </div>
+
+        <div class="proximos">
+            <h3>Próximos na Fila</h3>
+            <div id="lista-proximos"></div>
+        </div>
+
+        <div class="historico">
+            <h2>Últimas Chamadas</h2>
+            <div id="lista-historico">
+                </div>
+        </div>
+    </div>
+
+    <audio id="audio-chamada" src="https://www.soundjay.com/buttons/beep-01a.mp3" preload="auto"></audio>
+
+    <script src="{{ url_for('static', filename='js/painel.js') }}"></script>
+</body>
+</html>

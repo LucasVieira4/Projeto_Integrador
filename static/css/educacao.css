@@ -1,0 +1,243 @@
+@charset "UTF 8";
+
+:root {
+    --bg-color: #f4f7f6;
+    --siderbar-bg:#1c2b4a;
+    --text-color: #333;
+    --text-on-dark: #fff;
+    --card-bg: #fff;
+    --shadow: 0 4px 6px rgba(0,0,0,0.1);
+    --border-radius: 12px;
+
+    /*Cores dos cards*/
+    --blue-card: #3498db;
+    --orange-card: #f39c12;
+    --green-card: #2ecc71;
+
+    /*Cores de Status*/
+    --status-atendimento: #f39c12;
+    --status-livre: #ccc;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.main-content {
+    flex: 1;
+    padding: 40px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+header{
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 1.8rem;font-weight: bold;
+}
+
+.page-subtitle {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    font-weight: 500;
+}
+
+/*Cards Superiores*/
+.summary-cards {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    flex: 1;
+    border-radius: var(--border-radius);
+    color: white;
+    padding: 30px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: var(--shadow);
+    min-height: 140px;
+}
+
+.stat-card .number {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat-card .label {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.stat-card.blue {
+    background-color: var(--blue-card);
+}
+.stat-card.orange {
+    background-color: var(--orange-card);
+}
+.stat-card.green {
+    background-color: var(--green-card);
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.mesas-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.mesa-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    overflow: hidden;
+    border-left: 5px solid transparent;
+}
+/*Cores da borda esquerda baseadas no tipo/status*/
+.mesa-card.status-atendimento {
+    border-left: 5px solid var(--orange-card);
+}
+.mesa-card.status-livre {
+    border-left: 5px solid var(--status-livre);
+}
+
+.mesa-info {
+    flex: 1;
+    padding: 20px;
+    border-right: 1px solid #eee;
+}
+
+.mesa-number {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.mesa-service {
+    font-size: 0.9rem;
+    color: #667;
+}
+
+.mesa-ticket-details {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+}
+
+.ticket-current {
+    font-size: 0.9rem;
+}
+.ticket-current span {
+    font-weight: bold;
+}
+.patient-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.atendimento-status {
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-atendimento .atendimento-status {
+    color: var(--orange-card);
+}
+.status-livre .atendimento-status {
+    color: #999;
+}
+
+.status-livre .patient-name,
+.status-livre .ticket-current span {
+    color: #999;
+}
+/*Seçã Inferior (Tempo e Resumo) */
+.info-panels {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.info-panel-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+}
+
+.tempo-value {
+    font-size: 1rem;
+    margin-top: 10px;
+}
+/*Legenda do Gráfico*/
+.legenda {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.8rem;
+}
+
+.legenda-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.color-box {
+    width: 25px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+.color-matricula {
+    background-color: var(--blue-card);
+}
+.color-atend-geral {
+    background-color: var(--orange-card);
+}
+
+/*Ajuste responsivos*/
+@media (max-width: 768px) {
+    .mesas-grid, .info-panels {
+        grid-template-columns: 1fr;
+    }
+    .summary-cards{
+
+    }
+}

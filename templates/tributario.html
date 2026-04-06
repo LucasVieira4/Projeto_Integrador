@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tributário - QMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tributario.css')}}">
+</head>
+<body>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo">QMS</div>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('educacao') }}">Educação</a></li>
+                <li><a href="{{ url_for('saude') }}">Saúde</a></li>
+                <li class="active"><a href="{{ url_for('tributario') }}">Tributário</a></li>
+                <li><a href="{{ url_for('relatorio') }}">Relatório</a></li>
+                <br>
+                <li><a href="{{ url_for('logout') }}">Sair</a></li>
+            </ul>
+        </aside>
+
+        <div class="content">
+            <h1>Secretaria de Tributação - QMS</h1>
+
+            <h2 class="subtitulo">Atendimento Tributário</h2>
+
+            <div class="cards">
+                <div class="card azul">
+                    <h2 id="count-aguardando">0</h2>
+                    <p>Senhas Aguardando</p>
+                </div>
+
+                <div class="card laranja">
+                    <h2 id="count-atendimento">0</h2>
+                    <p>Em atendimento</p>
+                </div>
+
+                <div class="card verde">
+                    <h2 id="count-finalizados">0</h2>
+                    <p>Finalizados hoje</p>
+                </div>
+            </div>
+
+            <div class="painel-controle" style="background: #fff; padding: 20px; border-radius: 10px; border: 2px solid #f39c12; margin: 20px 0 30px 0; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <div>
+                    <h3 style="margin: 0; color: #1c2b4a;">Painel de Chamada</h3>
+                    <p style="margin: 5px 0 0 0; color: #666;">Setor: <strong>Tributário</strong></p>
+                </div>
+
+                <div style="text-align: center; background: #fef5e7; padding: 10px 30px; border-radius: 8px; border: 1px solid #f39c12;">
+                    <span style="display: block; font-size: 0.8rem; color: #845d1a;">SENHA ATUAL</span>
+                    <strong id="senha-atual" style="font-size: 2.2rem; color: #d35400;">---</strong>
+                    <span id="tipo-atual" style="display: block; font-size: 0.9rem; font-weight: bold; color: #333;">Aguardando Chamada</span>
+                </div>
+
+                <button onclick="chamarSenha('tributario')" style="background: #e67e22; color: white; border: none; padding: 15px 40px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.2rem; transition: 0.3s;">
+                    CHAMAR PRÓXIMO
+                </button>
+            </div>
+
+            <h3>Serviços do Tributário</h3>
+            </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/tributario.js') }}"></script>
+
+</body>
+</html>

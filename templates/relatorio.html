@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatórios - QMS</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/relatorio.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+<div class="main-container">
+
+    <!-- SIDEBAR -->
+   <aside class="sidebar">
+       <div class="sidebar-logo">QMS</div>
+       <ul class="nav-links">
+            <li class="active"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('educacao') }}">Educação</a></li>
+            <li><a href="{{ url_for('saude') }}">Saúde</a></li>
+            <li><a href="{{ url_for('tributario') }}">Tributário</a></li>
+            <li><a href="{{ url_for('relatorio') }}">Relatório</a></li>
+            <br>
+            <li><a href="{{ url_for('logout') }}">Sair</a></li>
+       </ul>
+   </aside>
+
+    <!-- CONTEÚDO -->
+    <main class="content">
+        <h1>Relatórios do Sistema</h1>
+
+        <!-- CARDS -->
+        <div class="dashboard-grid">
+            <div class="card edu-border">
+                <h3>Educação</h3>
+                <p id="total-educacao">0</p>
+            </div>
+
+            <div class="card sau-border">
+                <h3>Saúde</h3>
+                <p id="total-saude">0</p>
+            </div>
+
+            <div class="card tri-border">
+                <h3>Tributário</h3>
+                <p id="total-tributario">0</p>
+            </div>
+        </div>
+
+        <!-- GRÁFICOS -->
+        <div class="charts-grid">
+
+            <div class="chart-box">
+                <h3>Relatórios por Setor</h3>
+                <canvas id="graficoSetor"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>Status dos Atendimentos</h3>
+                <canvas id="graficoStatus"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>Atendimentos por Especialidade</h3>
+                <canvas id="graficoPizza"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>Atendimentos Diários</h3>
+                <canvas id="graficoLinha"></canvas>
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/relatorio.js') }}"></script>
+</body>
+</html>

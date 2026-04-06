@@ -1,0 +1,58 @@
+@charset "UTF-8";
+
+/* Reset básico para evitar variações entre navegadores */
+.sidebar, .sidebar * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sidebar {
+    width: 220px;
+    min-height: 100vh; /* Garante que a barra ocupe a altura toda */
+    background-color: #1c2b4a !important; /* Cor exata da primeira imagem */
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.sidebar-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 40px;
+    text-align: center;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+/* Forçando a cor branca para evitar o roxo de "link visitado" */
+.nav-links li a {
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 0.95rem;
+    display: block;
+    padding: 12px 15px;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.nav-links li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Classe para o item selecionado */
+.nav-links li.active a {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: 500;
+}

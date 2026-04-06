@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DASHBOARD - QMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+</head>
+<body>
+
+    <div class="main-container">
+
+        <aside class="sidebar">
+            <div class="sidebar-logo">QMS</div>
+            <ul class="nav-links">
+                <li class="active"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('educacao') }}">Educação</a></li>
+                <li><a href="{{ url_for('saude') }}">Saúde</a></li>
+                <li><a href="{{ url_for('tributario') }}">Tributário</a></li>
+                <li><a href="{{ url_for('relatorio') }}">Relatório</a></li>
+                <br>
+                <li><a href="{{ url_for('logout') }}">Sair</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <header class="main-header">
+                <h1>SISTEMA DE FILAS</h1>
+            </header>
+
+            <div class="dashboard-grid">
+
+                <div class="col-left">
+                    <div class="card card-user">
+                        <p class="label">Usuário:</p>
+                        <p class="user-name">{{ session['usuario_logado'] }}</p>
+                    </div>
+
+                    <div class="card card-date">
+                        <p class="date-highlight">Quarta-feira, 25</p>
+                        <p class="date-sub">de Outubro de 2023</p>
+                    </div>
+
+                    <div class="card card-weather">
+                        <p class="weather-temp">Temp: 24°C</p>
+                        <div class="weather-icon-placeholder">
+                            </div>
+                        <p class="weather-desc">Parcialmente Ensolarado</p>
+                    </div>
+                </div>
+
+                <div class="col-center">
+                    <div class="card card-gallery">
+                        <div class="gallery-grid">
+                            <div class="photo-item photo-1-placeholder">
+                                </div>
+                            <div class="photo-item photo-2-placeholder">
+                                </div>
+                            <div class="photo-item photo-3-placeholder">
+                                </div>
+                            <div class="photo-item photo-4-placeholder">
+                                </div>
+                            <div class="photo-item photo-main-placeholder">
+                                </div>
+                        </div>
+                        <div class="gallery-footer">
+                            <p>Inovação e Compromisso em Nossa Instituição</p>
+                            <div class="carousel-dots">
+                                <span class="dot active"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-right">
+                    <div class="card card-actions-blue">
+                        <h2>Ações Institucionais (Destaques)</h2>
+                        <ul>
+                            <li>Reforma do Setor A concluída</li>
+                            <li>Treinamento para equipe de Atendimento</li>
+                            <li>Doação para Campanha Social</li>
+                        </ul>
+                    </div>
+
+                    <div class="card card-actions-green">
+                        <h2>Ações em Setores</h2>
+                        <p><strong>Tecnologia:</strong> Atualização de Servidores</p>
+                        <p><strong>RH:</strong> Nova Política de Benefícios</p>
+                        <p><strong>Marketing:</strong> Campanha de Outubro Rosa</p>
+                    </div>
+                </div>
+
+            </div> <footer class="info-footer">
+                <div class="info-segment">
+                    <h3>Notícias Regionais:</h3>
+                    <p><strong>Cidade:</strong> Obras na Av. Principal causam desvios...</p>
+                    <p><strong>Regional:</strong> Festival Cultural agita fim da regionla...</p>
+                </div>
+                <div class="info-segment">
+                    <h3>Currenci solar:</h3>
+                    <p>USS/BRL: R$ 5,05 (+0.12%)</p>
+                </div>
+                <div class="info-segment">
+                    <h3>Alertas ClimaTempo:</h3>
+                    <p><strong>S. Paulo:</strong> Risco de chuvas fortes amanhã (28/10)...</p>
+                    <p><strong>Rio de Janeiro:</strong> Céu nublado e vento forte...</p>
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+</body>
+</html>

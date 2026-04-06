@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Saúde - QMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/saude.css') }}">
+</head>
+<body>
+
+    <div class="layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+        <div class="sidebar-logo">QMS</div>
+        <ul class="nav-links">
+                <li class="active"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('educacao') }}">Educação</a></li>
+                <li><a href="{{ url_for('saude') }}">Saúde</a></li>
+                <li><a href="{{ url_for('tributario') }}">Tributário</a></li>
+                <li><a href="{{ url_for('relatorio') }}">Relatório</a></li>
+                <br>
+                <li><a href="{{ url_for('logout') }}">Sair</a></li>
+        </ul>
+    </aside>
+
+        <!-- Conteúdo -->
+        <div class="content">
+            <h1>Atendimento Saúde - QMS</h1>
+
+            <!-- Cards -->
+
+
+            <div class="cards">
+                <div class="card blue">
+                    <h2 id="count-aguardando">0</h2> <p>Senhas Aguardando</p>
+                </div>
+                <div class="card orange">
+                    <h2 id="count-atendimento">0</h2> <p>Em atendimento</p>
+                </div>
+                <div class="card green">
+                    <h2 id="count-finalizados">0</h2> <p>Finalizados hoje</p>
+                </div>
+            </div>
+
+            <div class="painel-controle" style="background: #fff; padding: 20px; border-radius: 10px; border: 2px solid #3498db; margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <h3 style="margin: 0; color: #1c2b4a;">Painel do Atendente - Saúde</h3>
+                    <p style="margin: 5px 0 0 0; color: #666;">Clique para chamar o próximo paciente da fila.</p>
+                </div>
+
+                <div style="text-align: center; background: #f8f9fa; padding: 10px 30px; border-radius: 8px;">
+                    <span style="display: block; font-size: 0.8rem; color: #888;">SENHA ATUAL</span>
+                    <strong id="senha-atual" style="font-size: 2rem; color: #e74c3c;">---</strong>
+                    <span id="tipo-atual" style="display: block; font-size: 0.9rem; font-weight: bold;">Aguardando...</span>
+                </div>
+
+                <button onclick="chamarSenha('saude')" style="background: #27ae60; color: white; border: none; padding: 15px 30px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1.1rem;">
+                    CHAMAR PRÓXIMO
+                </button>
+            </div>
+
+            <!-- PRONTO ATENDIMENTO -->
+            <h3>Pronto Atendimento</h3>
+
+            <div class="servicos">
+
+                <div class="servico azul">
+                    <h4>Clínico Geral</h4>
+                    <p>5 aguardando</p>
+                    <span>Atual: Maria Souza</span>
+                </div>
+
+                <div class="servico laranja">
+                    <h4>Pediatria</h4>
+                    <p>3 aguardando</p>
+                    <span>Atual: Roberto Lima</span>
+                </div>
+
+                <div class="servico verde">
+                    <h4>Ortopedia</h4>
+                    <p>2 aguardando</p>
+                    <span>Atual: Fernanda Costa</span>
+                </div>
+
+            </div>
+
+            <!-- CONSULTAS -->
+            <h3>Consultas Ambulatoriais</h3>
+
+            <div class="servicos">
+
+                <div class="servico azul">
+                    <h4>Clínico Geral</h4>
+                    <p>4 aguardando</p>
+                    <span>Mesa 04</span>
+                </div>
+
+                <div class="servico laranja">
+                    <h4>Pediatria</h4>
+                    <p>2 aguardando</p>
+                    <span>Mesa 05</span>
+                </div>
+
+                <div class="servico verde">
+                    <h4>Ortopedia</h4>
+                    <p>1 aguardando</p>
+                    <span>Mesa 06</span>
+                </div>
+
+            </div>
+
+            <!-- MESAS -->
+            <h3>Mesas de Atendimento</h3>
+
+            <div class="mesas">
+
+                <div class="mesa">
+                    <h4>Mesa 01</h4>
+                    <p>Pronto Atendimento</p>
+                    <strong>Clínico Geral</strong>
+                    <p>Maria Souza</p>
+                    <div class="status azul">EM ATENDIMENTO - 12 MIN</div>
+                </div>
+
+                <div class="mesa">
+                    <h4>Mesa 02</h4>
+                    <p>Pronto Atendimento</p>
+                    <strong>Pediatria</strong>
+                    <p>Roberto Lima</p>
+                    <div class="status laranja">EM ATENDIMENTO - 8 MIN</div>
+                </div>
+
+                <div class="mesa">
+                    <h4>Mesa 03</h4>
+                    <p>Consultas</p>
+                    <strong>Ortopedia</strong>
+                    <p>Fernanda Costa</p>
+                    <div class="status verde">EM ATENDIMENTO - 20 MIN</div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Totem de Atendimento</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/totem.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Emissão de Senha</h1>
+
+        <label>Selecione o Setor:</label>
+        <select id="setorSelect">
+            <option value="saude">Saúde</option>
+            <option value="educacao">Educação</option>
+            <option value="tributario">Tributário</option>
+        </select>
+
+        <div class="grid">
+            <button class="btn-prioridade" onclick="gerarSenha(1)">IDOSO 80+</button>
+            <button class="btn-prioridade" onclick="gerarSenha(2)">GESTANTE</button>
+            <button class="btn-prioridade" onclick="gerarSenha(5)">TEA (AUTISMO)</button>
+            <button class="btn-prioridade" onclick="gerarSenha(7)">IDOSO 60-79</button>
+            <button class="btn-normal" onclick="gerarSenha(8)">ATENDIMENTO NORMAL</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/totem.js') }}"></script>
+
+</body>
+</html>

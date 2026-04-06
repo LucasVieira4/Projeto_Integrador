@@ -1,0 +1,78 @@
+@charset "UTF 8";
+
+/* CSS Rápido para o Painel */
+body {
+margin: 0;
+    font-family: sans-serif;
+    background: #1c2b4a;
+    color: white;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Lado Esquerdo: Senha Atual */
+.atual {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 5px solid #34495e;
+    background: #fff; color: #1c2b4a;
+}
+
+.atual h1 {
+    font-size: 5rem;
+    margin: 0;
+    color: #7f8c8d;
+}
+
+.atual .senha-grande {
+    font-size: 15rem;
+    font-weight: bold;
+    color: #e74c3c;
+    line-height: 1;
+}
+
+.atual .setor-grande {
+    font-size: 4rem;
+    text-transform: uppercase;
+    color: #2c3e50;
+}
+
+/* Lado Direito: Histórico */
+.historico {
+    flex: 1;
+    padding: 20px;
+    background: #2c3e50;
+}
+
+.historico h2 {
+    text-align: center;
+    border-bottom: 2px solid #34495e;
+    padding-bottom: 10px;
+}
+
+.item-historico {
+    background: #34495e;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-historico span {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.item-historico small {
+    font-size: 1rem;
+    color: #bdc3c7;
+}

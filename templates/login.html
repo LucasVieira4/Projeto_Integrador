@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - QMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style-login.css') }}">
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-box">
+
+            <h2>QMS</h2>
+            <p>Sistema de Filas</p>
+
+            <form action="{{ url_for('auth') }}" method="POST">
+
+                <input type="text" name="usuario" placeholder="Usuário" required>
+
+                <input type="password" name="senha" placeholder="Senha" required>
+
+                <button type="submit">Entrar</button>
+            </form>
+
+        </div>
+    </div>
+
+</body>
+</html>

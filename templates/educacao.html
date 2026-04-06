@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QMS - Educação - QMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/educacao.css')}}">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">QMS</div>
+        <ul class="nav-links">
+            <li class="active"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('educacao') }}">Educação</a></li>
+            <li><a href="{{ url_for('saude') }}">Saúde</a></li>
+            <li><a href="{{ url_for('tributario') }}">Tributário</a></li>
+            <li><a href="{{ url_for('relatorio') }}">Relatório</a></li>
+            <br>
+            <li><a href="{{ url_for('logout') }}">Sair</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <h1>Educação - QMS</h1>
+            <hr>
+        </header>
+
+        <div class="page-subtitle">Atendimento Educação</div>
+
+        <section class="summary-cards">
+            <div class="stat-card blue">
+                <div class="number">0</div>
+                <div class="label">Senhas Aguardando</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="number">0</div>
+                <div class="label">Em atendimento</div>
+            </div>
+            <div class="stat-card green">
+                <div class="number">0</div>
+                <div class="label">Finalizados Hoje</div>
+            </div>
+        </section>
+
+        <section class="controle-atendimento" style="margin-bottom: 30px;">
+            <div class="mesa-card" style="border: 2px solid #27ae60; background: #f9fffb; display: flex; align-items: center; justify-content: space-around;padding: 20px;">
+                <div class="mesa-info">
+                    <h2 style="margin: 0; color: #1c2b4a;">Painel do Atendente</h2>
+                    <p>Setor: <strong>Educação</strong></p>
+                </div>
+
+                <div id="painel-senha" style="text-align: center; min-width: 200px;">
+                    <div style="font-size: 0.9rem; color: #666;">SENHA ATUAL</div>
+                    <div id="senha-atual" style="font-size: 2.5rem; font-weight: bold; color: #e74c3c;">---</div>
+                    <div id="tipo-atual" style="font-size: 1rem; color: #333;">Aguardando...</div>
+                </div>
+
+                <button onclick="chamarProximo('educacao')" class="btn-chamar"
+                        style="padding: 15px 30px; font-size: 1.2rem; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s;">
+                    CHAMAR PRÓXIMO
+                </button>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Mesas de Atendimento</h2>
+            <div class="mesas-grid">
+
+                <div class="mesa-card status-atendimento">
+                    <div class="mesa-info">
+                        <div class="mesa-number">Mesa 01</div>
+                        <div class="mesa-service">Matrícula/Transferência</div>
+                    </div>
+                    <div class="mesa-ticket-details">
+                        <div class="ticket-current">Ticket Atual: <span>01</span></div>
+                        <div class="patient-name">João da Silva</div>
+                        <div class="atendimento-status">EM ATENDIMENTO - 15 min</div>
+                    </div>
+                </div>
+
+                <div class="mesa-card status-atendimento">
+                    <div class="mesa-info">
+                        <div class="mesa-number">Mesa 02</div>
+                        <div class="mesa-service">Atendimento Geral</div>
+                    </div>
+                    <div class="mesa-ticket-details">
+                        <div class="ticket-current">Ticket Atual: <span>02</span></div>
+                        <div class="patient-name">Maria Souza</div>
+                        <div class="atendimento-status">EM ATENDIMENTO - 10 min</div>
+                    </div>
+                </div>
+
+                <div class="mesa-card status-livre">
+                    <div class="mesa-info">
+                        <div class="mesa-number">Mesa 03</div>
+                        <div class="mesa-service">Matrícula/Transferência</div>
+                    </div>
+                    <div class="mesa-ticket-details">
+                        <div class="ticket-current">Ticket Atual: <span>03</span></div>
+                        <div class="patient-name">Livre</div>
+                    </div>
+                </div>
+
+                <div class="mesa-card status-livre">
+                    <div class="mesa-info">
+                        <div class="mesa-number">Mesa 04</div>
+                        <div class="mesa-service">Atendimento Geral</div>
+                    </div>
+                    <div class="mesa-ticket-details">
+                        <div class="ticket-current">Ticket Atual: <span>04</span></div>
+                        <div class="patient-name">Livre</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="info-panels">
+
+            <div class="info-panel-card">
+                <h2 class="section-title">Resumo de Atendimentos por Serviço (Educação)</h2>
+                <div class="legenda">
+                    <div class="legenda-item">
+                        <div class="color-box color-matrícula"></div>
+                        <span>Matrícula/Transf: 15</span>
+                    </div>
+                    <div class="legenda-item">
+                        <div class="color-box color-atend-geral"></div>
+                        <span>Atend. Geral: 23</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/educacao.js') }}"></script>
+
+</body>
+</html>

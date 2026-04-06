@@ -1,0 +1,270 @@
+ @charset "UTF 8";
+
+ /* --- ESTILOS GERAIS --- */
+:root {
+    --bg-color: #f4f7f6;
+    --sidebar-bg: #1c2b48;
+    --text-color-dark: #333;
+    --text-color-light: #fff;
+    --card-bg: #fff;
+    --accent-blue: #337ab7;
+    --accent-orange: #f0ad4e;
+    --accent-green: #5cb85c;
+    --border-radius: 8px;
+    --shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color-dark);
+    height: 100vh;
+    overflow: hidden; /* Impede rolagem na página principal */
+}
+
+.main-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* --- BARRA LATERAL (SIDEBAR) --- */
+
+
+/* --- ÁREA DE CONTEÚDO --- */
+.content {
+    flex-grow: 1;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Permite rolagem apenas no conteúdo se necessário */
+}
+
+.main-header {
+    margin-bottom: 25px;
+}
+
+.main-header h1 {
+    font-size: 28px;
+    color: var(--sidebar-bg);
+    font-weight: normal;
+}
+
+/* --- GRID DO DASHBOARD (Estrutura Principal) --- */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 220px 1fr 280px; /* Larguras das colunas */
+    gap: 20px;
+    flex-grow: 1;
+    margin-bottom: 20px;
+}
+
+/* --- ESTILOS DOS CARDS (COMUNS) --- */
+.card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+/* --- COLUNA ESQUERDA --- */
+.col-left {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.card-user p.label {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.card-user .user-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--accent-blue);
+    line-height: 1.2;
+}
+
+.card-date {
+    background-color: var(--accent-orange);
+    color: var(--text-color-light);
+    text-align: center;
+}
+
+.card-date .date-highlight {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.card-date .date-sub {
+    font-size: 14px;
+}
+
+.card-weather {
+    text-align: center;
+}
+
+.card-weather .weather-temp {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.weather-icon-placeholder {
+    width: 60px;
+    height: 60px;
+    background-color: #eee; /* Placeholder */
+    margin: 10px auto;
+    border-radius: 50%;
+    /* Se usar imagem:
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    */
+}
+.weather-icon-placeholder img { max-width: 100%; height: auto; }
+
+.card-weather .weather-desc {
+    font-size: 14px;
+    color: #666;
+}
+
+/* --- COLUNA CENTRAL (GALERIA) --- */
+.col-center {
+    display: flex;
+}
+
+.card-gallery {
+    flex-grow: 1;
+    padding: 10px; /* Menor padding para a galeria */
+    display: flex;
+    flex-direction: column;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 120px 1fr; /* Altura da linha de cima e de baixo */
+    gap: 10px;
+    flex-grow: 1;
+    margin-bottom: 10px;
+}
+
+.photo-item {
+    background-color: #e0e0e0; /* Placeholder color */
+    border-radius: 4px;
+    overflow: hidden;
+}
+.photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Posicionamento específico das fotos baseado na imagem */
+.photo-1-placeholder { grid-column: 1 / 2; grid-row: 1 / 2; }
+.photo-2-placeholder { grid-column: 2 / 3; grid-row: 1 / 2; }
+.photo-3-placeholder { grid-column: 4 / 5; grid-row: 1 / 2; } /* Foto pequena superior direita */
+.photo-4-placeholder { grid-column: 4 / 5; grid-row: 2 / 3; } /* Foto pequena inferior direita */
+
+.photo-main-placeholder {
+    grid-column: 1 / 4; /* Ocupa 3 colunas */
+    grid-row: 2 / 3;    /* Na linha de baixo */
+}
+
+.gallery-footer {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.gallery-footer p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.dot.active {
+    background-color: #555;
+}
+
+/* --- COLUNA DIREITA (AÇÕES) --- */
+.col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.col-right h2 {
+    font-size: 16px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.card-actions-blue {
+    background-color: #f0f7ff; /* Tom azul muito claro */
+    border: 1px solid #d0e0f0;
+}
+.card-actions-blue h2 { color: var(--accent-blue); }
+
+.card-actions-blue ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    font-size: 14px;
+    color: #555;
+}
+.card-actions-blue li { margin-bottom: 8px; }
+
+.card-actions-green {
+    background-color: #f2fdf2; /* Tom verde muito claro */
+    border: 1px solid #d8ebd8;
+}
+.card-actions-green h2 { color: var(--accent-green); }
+
+.card-actions-green p {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+/* --- RODAPÉ INFORMATIVO --- */
+.info-footer {
+    background-color: var(--sidebar-bg);
+    color: #a0b1c5;
+    border-radius: var(--border-radius);
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    font-size: 13px;
+    margin-top: auto; /* Empurra o rodapé para baixo */
+}
+
+.info-segment h3 {
+    color: var(--text-color-light);
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.info-segment p {
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
