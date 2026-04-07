@@ -23,7 +23,7 @@ class Senha(Base):
     setor = Column(Enum('educacao', 'saude', 'tributario'), nullable=False)
     servico = Column(String(100), nullable=False)
     tipo = Column(String(50), nullable=False)
-    prioridade = Column(String(20), default='normal')
+    prioridade = Column(Integer, default=1)
     status = Column(String(20), default='aguardando')
     data_emissao = Column(DateTime, server_default=func.now())
     data_inicio_atendimento = Column(DateTime)

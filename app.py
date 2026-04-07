@@ -50,7 +50,7 @@ def painel_completo():
 
     # 2. PRÓXIMOS: As próximas 5 senhas que estão na fila (aguardando)
     proximos = db.query(Senha).filter_by(status="aguardando") \
-        .order_by(Senha.prioridade.asc(), Senha.id.asc()).limit(5).all()
+        .order_by(Senha.prioridade.desc(), Senha.id.asc()).limit(5).all()
 
     # 3. FINALIZADOS: As últimas 5 senhas que já foram atendidas
     finalizados = db.query(Senha).filter_by(status="finalizado") \
@@ -87,56 +87,60 @@ def ultima_chamada():
     Session.remove()
     return jsonify(None)
 
-@app.route('/api/historico_painel')
-def historico_painel():
-
-    db = Session()
-    chamadas = db.query(Senha).filter_by(status="em atendimento").order_by(Senha.id.desc()).offset(1).limit(5).all()
-
-    lista = [{'codigo': s.senha, 'setor': s.setor} for s in chamadas]
-
-    Session.remove()
-    return jsonify(lista)
-
 
 @app.route("/api/gerar_senha", methods=['POST'])
 def gerar_senha():
     dados = request.json
-    setor = dados.get('setor')
-    prioridade_num = int(dados.get('prioridade'))# O número (1 a 8) vindo do totem
+    setor = dados.get('setor', 'geral')
+    # O número (1 a 8) que vem do clique no botão do totem
+    prioridade_origem = int(dados.get('prioridade', 8))
 
-
+    # 1. MAPEAMENTO DE EXIBIÇÃO (O que aparece no ticket)
     prefixos = {1: "I+", 2: "G", 3: "L", 4: "C", 5: "T", 6: "D", 7: "I", 8: "N"}
-    tipos = {1: "Idoso 80+", 2: "Gestante", 3: "Lactante", 4: "Criança de Colo", 5: "TEA", 6: "Deficiente", 7: "Idoso",
-             8: "Normal"}
+    nomes = {
+        1: "Idoso 80+", 2: "Gestante", 3: "Lactante",
+        4: "Criança de Colo", 5: "TEA", 6: "Deficiente",
+        7: "Idoso", 8: "Normal"
+    }
 
-    prefixo = prefixos.get(prioridade_num, "N")
-    nome_tipo = tipos.get(prioridade_num, "Normal")
+    # 2. HIERARQUIA DE PESOS (O que o banco usa para ordenar a fila)
+    # Aqui definimos que 80+ (ID 1 do totem) tem o maior peso (5)
+    pesos_reais = {
+        1: 5,  # Idoso 80+ -> Peso Máximo
+        5: 4, 6: 4, 7: 4,  # TEA, Deficiente, Idoso 60-79 -> Peso Alto
+        2: 3, 3: 3, 4: 3,  # Gestante, Lactante, Colo -> Peso Médio
+        8: 1  # Normal -> Peso Mínimo
+    }
+
+    prefixo = prefixos.get(prioridade_origem, "N")
+    nome_tipo = nomes.get(prioridade_origem, "Normal")
+    peso_fila = pesos_reais.get(prioridade_origem, 1)
+
+    # Gera o código (Ex: I+-001 ou N-001)
     codigo = obter_proximo_codigo(prefixo, setor)
-
-    # CORREÇÃO: Mapeia o número para o que o Banco (Enum) aceita
-    # Se for de 1 a 7 (prioritarios), envia 'Prioritario'. Se for 8, 'Normal'.
-    prioridade_texto = "Prioritario" if prioridade_num < 8 else "Normal"
 
     db = Session()
     try:
         nova_senha = Senha(
             senha=codigo,
-            tipo=nome_tipo,
-            prioridade=prioridade_texto,  # AGORA ENVIA A STRING CORRETA
+            tipo=nome_tipo,  # Salva o nome amigável (Ex: "Idoso 80+")
+            prioridade=peso_fila,  # SALVA O NÚMERO (5, 4, 3 ou 1) PARA ORDENAÇÃO
             status="aguardando",
             setor=setor,
-            servico="Atendimento Geral"  # ADICIONADO: Campo obrigatório no seu model
+            servico="Atendimento Geral"
         )
         db.add(nova_senha)
         db.commit()
-        res = {"codigo": codigo, "tipo": nome_tipo}
-        return jsonify(res)
+
+        print(f">>> SENHA GERADA: {codigo} | TIPO: {nome_tipo} | PESO: {peso_fila}")
+        return jsonify({"codigo": codigo, "tipo": nome_tipo})
+
     except Exception as e:
         db.rollback()
-        print(f"erro ao salvar no banco: {e}")
+        print(f"Erro ao salvar no banco: {e}")
         return jsonify({"erro": str(e)}), 500
-
+    finally:
+        db.close()
 
 @app.route("/api/chamar_proximo/<setor>")
 def chamar_proximo(setor):
