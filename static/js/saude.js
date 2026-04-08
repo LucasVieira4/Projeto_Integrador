@@ -1,51 +1,48 @@
-async function chamarProximo() {
-    // Definimos o setor manualmente para este arquivo específico
-    const setorAtual = 'saude';
+async function chamarSenha(setor) {
+            try {
+                const response = await fetch(`/api/chamar_proximo/${setor}`);
+                const data = await response.json();
 
-    try {
-        const response = await fetch(`http://192.168.15.4:5000/api/chamar_proximo/${setorAtual}`);
-        const data = await response.json();
+                if (data.erro) {
+                    alert("Não há pacientes aguardando no setor de Saúde.");
+                } else {
+                    // Atualiza o visor central com a nova senha
+                    document.getElementById('senha-atual').innerText = data.codigo;
+                    document.getElementById('tipo-atual').innerText = data.tipo;
 
-        if (data.erro) {
-            alert("Fila vazia para o setor Saúde.");
-            document.getElementById('senha-atual').innerText = "---";
-            document.getElementById('tipo-atual').innerText = "Nenhum";
-        } else {
-            // Atualiza o visor de senha no painel central
-            document.getElementById('senha-atual').innerText = data.codigo;
-            document.getElementById('tipo-atual').innerText = data.tipo;
+                    // Alerta sonoro opcional
+                    const audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
+                    audio.play().catch(e => console.log("Áudio bloqueado pelo navegador"));
 
-            // Som de alerta (Beep)
-            const audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
-            audio.play();
-
-            // Atualiza os cards de números imediatamente
-            atualizarMiniDashboard();
+                    // Atualiza os contadores imediatamente
+                    atualizarMiniDashboard();
+                }
+            } catch (error) {
+                console.error("Erro ao processar chamada:", error);
+            }
         }
-    } catch (error) {
-        console.error("Erro ao chamar senha:", error);
-    }
-}
 
-// Função para atualizar os cards de estatísticas (os azuis/laranjas/verdes no topo)
-async function atualizarMiniDashboard() {
-    try {
-        const response = await fetch('http://192.168.15.4:5000/api/dashboard');
-        const data = await response.json();
+        // 2. Função para atualizar os cards (Azul, Laranja, Verde)
+        async function atualizarMiniDashboard() {
+            try {
+                const response = await fetch('/api/dashboard');
+                const data = await response.json();
 
-        // Verificando se os elementos com os IDs corretos existem na tela
-        if(document.getElementById('count-aguardando')) {
-            document.getElementById('count-aguardando').innerText = data.aguardando;
-            document.getElementById('count-atendimento').innerText = data.atendimento;
-            document.getElementById('count-finalizados').innerText = data.finalizados;
+                // Verificamos se o Python retornou os dados e se os IDs existem na tela
+                if (data && !data.erro) {
+                    document.getElementById('count-aguardando').innerText = data.aguardando || 0;
+                    document.getElementById('count-atendimento').innerText = data.atendimento || 0;
+                    // Note que no Python usamos 'finalizado', aqui garantimos a sincronia
+                    document.getElementById('count-finalizados').innerText = data.finalizado || 0;
+                }
+            } catch (e) {
+                console.log("Erro ao buscar dados do dashboard");
+            }
         }
-    } catch (e) {
-        console.log("Erro ao atualizar dashboard");
-    }
-}
 
-// Atualiza os números automaticamente a cada 10 segundos
-setInterval(atualizarMiniDashboard, 10000);
+        // 3. Configurações Iniciais
+        // Atualiza os contadores a cada 5 segundos automaticamente
+        setInterval(atualizarMiniDashboard, 5000);
 
-// Faz a primeira busca assim que a página é carregada
-window.onload = atualizarMiniDashboard;
+        // Busca dados assim que a página abre
+        window.onload = atualizarMiniDashboard;

@@ -142,23 +142,68 @@ def gerar_senha():
     finally:
         db.close()
 
+
 @app.route("/api/chamar_proximo/<setor>")
 def chamar_proximo(setor):
     db = Session()
     setor = setor.lower()
 
-    proxima = db.query(Senha).filter_by(setor=setor, status="aguardando").order_by(Senha.prioridade.asc(), Senha.id.asc()).first()
+    try:
+        # 1. Conta quantos atendimentos já foram CONCLUÍDOS ou estão EM ANDAMENTO hoje
+        # Isso serve como nosso ponteiro do ciclo
+        total_ja_chamados = db.query(Senha).filter(
+            Senha.setor == setor,
+            Senha.status.in_(['em atendimento', 'finalizado'])
+        ).count()
 
-    if proxima:
-        db.query(Senha).filter_by(setor=setor, status="em atendimento").update({"status": "finalizado"})
+        # O próximo atendimento será o número:
+        proximo_numero = total_ja_chamados + 1
 
-        proxima.status = "em atendimento"
-        db.commit()
-        return jsonify({"codigo": proxima.senha, "tipo": proxima.tipo})
+        proxima = None
 
-    return jsonify({"erro": "Fila vazia"}), 404
+        # 2. REGRA DO CICLO (2 Prioritários : 1 Normal)
+        # Se o resto da divisão por 3 for 0, é a vez do Normal (atendimentos 3, 6, 9...)
+        if proximo_numero % 3 == 0:
+            proxima = db.query(Senha).filter_by(
+                setor=setor,
+                status="aguardando",
+                prioridade=1
+            ).order_by(Senha.id.asc()).first()
 
+            # Se não houver Normal para cumprir o ciclo, busca qualquer um (Prioritário)
+            if not proxima:
+                proxima = db.query(Senha).filter_by(setor=setor, status="aguardando") \
+                    .order_by(Senha.prioridade.desc(), Senha.id.asc()).first()
 
+        else:
+            # É a vez do Prioritário (atendimentos 1, 2, 4, 5, 7, 8...)
+            proxima = db.query(Senha).filter(
+                Senha.setor == setor,
+                Senha.status == "aguardando",
+                Senha.prioridade > 1
+            ).order_by(Senha.prioridade.desc(), Senha.id.asc()).first()
+
+            # Se não houver Prioritário, busca qualquer um (Normal)
+            if not proxima:
+                proxima = db.query(Senha).filter_by(setor=setor, status="aguardando") \
+                    .order_by(Senha.id.asc()).first()
+
+        # 3. Executa a chamada
+        if proxima:
+            # Limpa o que estava em atendimento antes
+            db.query(Senha).filter_by(setor=setor, status="em atendimento").update({"status": "finalizado"})
+
+            proxima.status = "em atendimento"
+            db.commit()
+            return jsonify({"codigo": proxima.senha, "tipo": proxima.tipo})
+
+        return jsonify({"erro": "Fila vazia"}), 404
+
+    except Exception as e:
+        db.rollback()
+        return jsonify({"erro": str(e)}), 500
+    finally:
+        db.close()
 
 # --- ROTAS DAS PÁGINAS ---
 
