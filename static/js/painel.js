@@ -3,50 +3,57 @@ let ultimaSenhaChamada = "";
 async function atualizarPainelCompleto() {
     try {
         const response = await fetch('/api/painel_completo');
+        if (!response.ok) throw new Error("Erro na requisição");
         const data = await response.json();
 
-        // --- 1. ATUALIZA A SENHA ATUAL (PRINCIPAL) ---
+        // --- 1. SENHA ATUAL (CHAMADA PRINCIPAL) ---
         if (data.atual) {
             const senhaPrincipal = document.getElementById('senha-principal');
-
-            // Se a senha mudou, toca o som e pisca
-            if (data.atual.codigo !== ultimaSenhaChamada) {
+            if (senhaPrincipal && data.atual.codigo !== ultimaSenhaChamada) {
                 senhaPrincipal.innerText = data.atual.codigo;
                 document.getElementById('setor-principal').innerText = data.atual.setor.toUpperCase();
                 document.getElementById('tipo-principal').innerText = data.atual.tipo;
 
-                document.getElementById('audio-chamada').play().catch(e => console.log("Aguardando interação para som"));
+                // Toca o som
+                const audio = document.getElementById('audio-chamada');
+                if (audio) audio.play().catch(e => console.log("Som bloqueado pelo navegador"));
 
-                document.body.style.backgroundColor = "#e74c3c";
-                setTimeout(() => { document.body.style.backgroundColor = "#1c2b4a"; }, 1000);
+                // Efeito visual de alerta
+                document.body.classList.add('alerta-chamada');
+                setTimeout(() => { document.body.classList.remove('alerta-chamada'); }, 2000);
 
                 ultimaSenhaChamada = data.atual.codigo;
             }
         }
 
-        // --- 2. ATUALIZA A LISTA DE PRÓXIMOS (Pode criar um div no HTML para isso) ---
-        // Se você tiver um <div id="lista-proximos"> no HTML:
+        // --- 2. PRÓXIMOS NA FILA ---
         const divProximos = document.getElementById('lista-proximos');
-        if (divProximos) {
+        if (divProximos && data.proximos) {
             divProximos.innerHTML = data.proximos.map(s =>
-                `<div class="item-proximo">${s.codigo} - <small>${s.setor}</small></div>`
+                `<div class="item-proximo">
+                    <strong>${s.codigo}</strong>
+                    <small>${s.setor.toUpperCase()}</small>
+                </div>`
             ).join('');
         }
 
-        // --- 3. ATUALIZA O HISTÓRICO (FINALIZADOS) ---
+        // --- 3. ÚLTIMAS CHAMADAS (HISTÓRICO) ---
         const listaHistorico = document.getElementById('lista-historico');
-        listaHistorico.innerHTML = data.finalizados.map(s => `
-            <div class="item-historico">
-                <span>${s.codigo}</span>
-                <small>${s.setor.toUpperCase()}</small>
-            </div>
-        `).join('');
+        if (listaHistorico && data.finalizados) {
+            // O .innerHTML limpa a lista antiga e o .map coloca na ordem do Python
+            listaHistorico.innerHTML = data.finalizados.map(s => `
+                <div class="item-historico">
+                    <span>${s.codigo}</span>
+                    <small>${s.setor.toUpperCase()}</small>
+                </div>
+            `).join('');
+        }
 
     } catch (error) {
         console.error("Erro ao atualizar painel:", error);
     }
 }
 
-// Executa a cada 3 segundos
+// Inicia o loop
 setInterval(atualizarPainelCompleto, 3000);
 window.onload = atualizarPainelCompleto;

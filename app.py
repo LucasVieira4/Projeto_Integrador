@@ -45,16 +45,19 @@ def painel_completo():
     db = Session()
 
     # 1. ATUAL: A última senha que mudou para "em atendimento"
-    atual = db.query(Senha).filter_by(status="em atendimento") \
-        .order_by(Senha.id.desc()).first()
+    atual = db.query(Senha).filter_by(status="em atendimento").order_by(Senha.id.desc()).first()
 
-    # 2. PRÓXIMOS: As próximas 5 senhas que estão na fila (aguardando)
-    proximos = db.query(Senha).filter_by(status="aguardando") \
-        .order_by(Senha.prioridade.desc(), Senha.id.asc()).limit(5).all()
+    # 2. PRÓXIMOS: Aplicando a lógica 2:1 para o JSON
+    prio = db.query(Senha).filter(Senha.status == "aguardando", Senha.prioridade > 1).order_by(Senha.prioridade.desc(), Senha.id.asc()).all()
+    norm = db.query(Senha).filter(Senha.status == "aguardando", Senha.prioridade == 1).order_by(Senha.id.asc()).all()
+
+    total_chamados = db.query(Senha).filter(Senha.status.in_(['em atendimento', 'finalizado'])).count()
+
+    # Usa a função que você já tem no código
+    fila_mista = obter_fila_ordenada(prio, norm, total_chamados)
 
     # 3. FINALIZADOS: As últimas 5 senhas que já foram atendidas
-    finalizados = db.query(Senha).filter_by(status="finalizado") \
-        .order_by(Senha.id.desc()).limit(5).all()
+    finalizados = db.query(Senha).filter_by(status="finalizado").order_by(Senha.id.desc()).limit(10).all()
 
     res = {
         "atual": {
@@ -62,7 +65,7 @@ def painel_completo():
             "setor": atual.setor,
             "tipo": atual.tipo
         } if atual else None,
-        "proximos": [{"codigo": s.senha, "setor": s.setor} for s in proximos],
+        "proximos": [{"codigo": s.senha, "setor": s.setor} for s in fila_mista[:10]],  # Agora em ordem 2:1
         "finalizados": [{"codigo": s.senha, "setor": s.setor} for s in finalizados]
     }
 
@@ -321,18 +324,91 @@ def dados_dashboard():
         "finalizado": finalizado
     })
 
-# painel tv
 
-@app.route("/painel")
-def painel_publico():
-    # Esta rota não precisa de login, pois ficará na TV da recepção
-    return render_template("painel.html")
+def obter_fila_ordenada(prioritarios, normais, total_ja_chamados=0):
+    fila_final = []
+    p_idx = 0
+    n_idx = 0
 
-# resolver problema de limitação de conexões
+    # Define a posição inicial no ciclo 2:1 baseado em quem já foi chamado
+    ponteiro = total_ja_chamados + 1
+
+    while p_idx < len(prioritarios) or n_idx < len(normais):
+        # A cada 3 posições (3º, 6º, 9º...), a vez é do Normal
+        if ponteiro % 3 == 0:
+            if n_idx < len(normais):
+                fila_final.append(normais[n_idx])
+                n_idx += 1
+            elif p_idx < len(prioritarios):
+                fila_final.append(prioritarios[p_idx])
+                p_idx += 1
+        else:
+            # Posições 1 e 2 do ciclo são para Prioritários
+            if p_idx < len(prioritarios):
+                fila_final.append(prioritarios[p_idx])
+                p_idx += 1
+            elif n_idx < len(normais):
+                fila_final.append(normais[n_idx])
+                n_idx += 1
+
+        ponteiro += 1
+
+    return fila_final
+@app.route('/painel')
+def painel():
+    db = Session()
+    try:
+
+        total_chamados = db.query(Senha).filter(Senha.status.in_(['em atendimento', 'finalizado'])).count()
+        # 1. Busca os Prioritários:
+        # Ordena PRIMEIRO pelo peso (5, 4, 3) e DEPOIS por quem chegou antes (id)
+        prioritarios = db.query(Senha).filter(
+            Senha.status == 'aguardando',
+            Senha.prioridade > 1
+        ).order_by(Senha.prioridade.desc(), Senha.id.asc()).all()
+
+        # 2. Busca os Normais:
+        # Ordena apenas por ordem de chegada
+        normais = db.query(Senha).filter(
+            Senha.status == 'aguardando',
+            Senha.prioridade == 1
+        ).order_by(Senha.id.asc()).all()
+
+        # 3. Aplica a lógica de intercalação (2 prioritários : 1 normal)
+        # Usando a função auxiliar obter_fila_ordenada que você já tem no código
+        fila_completa = obter_fila_ordenada(prioritarios, normais, total_chamados)
+
+        # 4. Renderiza o template passando a lista organizada
+        # Limitamos aos 10 primeiros para manter o painel limpo
+        return render_template('painel.html', proximos=fila_completa[:10])
+
+    except Exception as e:
+        print(f"Erro ao carregar painel: {e}")
+        return "Erro interno no servidor", 500
+    finally:
+        # IMPORTANTE: Sempre remover a sessão para liberar conexões com o MySQL
+        Session.remove()
 
 @app.teardown_appcontext
 def shutdown_session(_=None):
     Session.remove()
+
+
+@app.route('/finalizar/<int:id>')
+def finalizar(id):
+    db = Session()
+    try:
+        senha = db.query(Senha).get(id)
+        if senha:
+            senha.status = "finalizado"
+            db.commit()
+            return jsonify({"status": "sucesso"}), 200
+        return jsonify({"status": "erro", "mensagem": "Senha não encontrada"}), 404
+    except Exception as e:
+        db.rollback()
+        return jsonify({"status": "erro", "mensagem": str(e)}), 500
+    finally:
+        Session.remove()
 
 # INICIA O SERVIDOR
 if __name__ == "__main__":
