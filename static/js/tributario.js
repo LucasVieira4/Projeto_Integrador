@@ -1,51 +1,46 @@
-async function chamarProximo() {
-    // Como o arquivo é tributario.js, definimos o setor direto aqui
-    const setorAtual = 'tributario';
-
+// 1. Função para Chamar a Próxima Senha (Seguindo o padrão da Educação)
+async function chamarSenha(setor) {
     try {
-        const response = await fetch(`/api/chamar_proximo/${setorAtual}`);
+        // Usando a mesma rota que funcionou na educação
+        const response = await fetch(`/api/chamar_proximo/${setor}`);
         const data = await response.json();
 
         if (data.erro) {
-            alert("Fila vazia para o setor Tributário.");
-            document.getElementById('senha-atual').innerText = "---";
-            document.getElementById('tipo-atual').innerText = "Nenhum";
+            alert("Não há pessoas aguardando no setor de Tributação.");
         } else {
-            // Atualiza o visor central
+            // Mapeando os IDs do seu HTML do Tributário
             document.getElementById('senha-atual').innerText = data.codigo;
             document.getElementById('tipo-atual').innerText = data.tipo;
 
-            // Som de alerta
+            // Alerta sonoro
             const audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
-            audio.play();
+            audio.play().catch(e => console.log("Som bloqueado pelo navegador"));
 
-            // Atualiza os cards de números imediatamente após chamar
-            atualizarMiniDashboard();
+            atualizarStatus(); // Atualiza os números após chamar
         }
     } catch (error) {
-        console.error("Erro ao chamar senha:", error);
+        console.error("Erro ao processar chamada no tributário:", error);
     }
 }
 
-async function atualizarMiniDashboard() {
+// 2. Função para atualizar os cards (Com os IDs específicos do Tributário)
+async function atualizarStatus() {
     try {
+        // Se a Educação usa /api/dashboard, usaremos aqui também para manter o padrão
         const response = await fetch('/api/dashboard');
         const data = await response.json();
 
-        // ATENÇÃO: Verifique se no seu HTML o ID é 'count-aguardando' ou 'card-aguardando'
-        // No HTML que montamos antes, usamos 'count-...'
-        if(document.getElementById('count-aguardando')) {
-            document.getElementById('count-aguardando').innerText = data.aguardando;
-            document.getElementById('count-atendimento').innerText = data.atendimento;
-            document.getElementById('count-finalizados').innerText = data.finalizados;
+        if (data && !data.erro) {
+            // No seu HTML do Tributário, os IDs começam com "count-"
+            document.getElementById('count-aguardando').innerText = data.aguardando || 0;
+            document.getElementById('count-atendimento').innerText = data.atendimento || 0;
+            document.getElementById('count-finalizados').innerText = data.finalizado || 0;
         }
     } catch (e) {
-        console.log("Erro ao atualizar dashboard");
+        console.error("Erro ao buscar dados do dashboard tributário");
     }
 }
 
-// Atualiza os números a cada 10 segundos
-setInterval(atualizarMiniDashboard, 10000);
-
-// Executa assim que a página abre
-window.onload = atualizarMiniDashboard;
+// 3. Inicialização e Polling
+setInterval(atualizarStatus, 5000); // Atualiza a cada 5 segundos
+window.onload = atualizarStatus;
