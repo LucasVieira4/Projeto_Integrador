@@ -130,7 +130,7 @@ def gerar_senha():
             prioridade=peso_fila,  # SALVA O NÚMERO (5, 4, 3 ou 1) PARA ORDENAÇÃO
             status="aguardando",
             setor=setor,
-            servico="Atendimento Geral"
+            servico="clinico geral"
         )
         db.add(nova_senha)
         db.commit()
@@ -388,6 +388,33 @@ def painel():
     finally:
         # IMPORTANTE: Sempre remover a sessão para liberar conexões com o MySQL
         Session.remove()
+
+@app.route("/api/cadastrar_atendimento", methods=['POST'])
+def cadastrar_atendimento():
+    dados = request.json
+    db = Session()
+    try:
+        # Busca a senha que está atualmente em atendimento para este atendente
+        atendimento = db.query(Senha).filter_by(
+            senha=dados.get('codigo'),
+            status='em atendimento'
+        ).first()
+
+        if atendimento:
+            atendimento.nome_paciente = dados.get('nome')
+            atendimento.endereco = dados.get('endereco')
+            atendimento.data_nascimento = dados.get('nascimento')
+            atendimento.filiacao = dados.get('filiacao')
+            atendimento.servico = dados.get('especialidade') # Aqui ocorre o encaminhamento
+            atendimento.status = 'finalizado' # Ou 'aguardando' se for para outra fila
+            db.commit()
+            return jsonify({"status": "sucesso"})
+        return jsonify({"erro": "Atendimento não encontrado"}), 404
+    except Exception as e:
+        db.rollback()
+        return jsonify({"erro": str(e)}), 500
+    finally:
+        db.close()
 
 @app.teardown_appcontext
 def shutdown_session(_=None):
