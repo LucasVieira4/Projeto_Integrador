@@ -11,7 +11,10 @@ body {
 }
 
 .main-content{
-
+    flex: 1;
+    padding: 40px;
+    margin-left: 240px;
+    min-heigth: 100vh;
 }
 
 .content {

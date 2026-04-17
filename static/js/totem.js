@@ -1,5 +1,5 @@
 async function gerarSenha(prioridade) {
-    const setor = document.getElementById('setorSelect').value;
+    const setor = 'saude';
 
     try {
         const response = await fetch('http://localhost:5000/api/gerar_senha', {

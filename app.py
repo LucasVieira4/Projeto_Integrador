@@ -137,10 +137,18 @@ def painel():
 
     finally:
         db.close()
-
+      #=====ROTAS TOTENS=======
 @app.route('/totem')
 def totem():
     return render_template("totem.html")
+
+@app.route('/totem/<setor>')
+def totem_setor(setor):
+    setores_validos = ['saude', 'educação', 'tributario']
+    if setor not in setores_validos:
+        return redirect(url_for('totem'))
+    return render_template(f"totem_{setor}.html", setor=setor)
+
 
 @app.route("/saude")
 def saude():
@@ -302,7 +310,19 @@ def dashboard_api():
 
             "contagem_certidoes": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="certidoes").count(),
 
-            "contagem_cadastro imobiliario": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="cadastro imobiliario").count()
+            "contagem_cadastro imobiliario": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="cadastro imobiliario").count(),
+                 #========EDUCACAO=======================
+            "contagem_matriculas": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="matriculas").count(),
+
+            "contagem_documentos": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="documentos").count(),
+
+            "contagem_transporte": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="transporte").count(),
+
+            "contagem_creches": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="creches").count(),
+
+            "contagem_inclusao": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="inclusao").count(),
+
+            "contagem_geral": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="atendimento geral").count()
         })
     finally:
         db.close()
