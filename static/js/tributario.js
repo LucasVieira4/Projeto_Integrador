@@ -35,6 +35,13 @@ async function atualizarStatus() {
             document.getElementById('count-aguardando').innerText = data.aguardando || 0;
             document.getElementById('count-atendimento').innerText = data.atendimento || 0;
             document.getElementById('count-finalizados').innerText = data.finalizado || 0;
+
+            document.getElementById('atend-iptu').innerText = data.contagem_iptu || 0;
+            document.getElementById('atend-iss').innerText = data.contagem_iss || 0;
+            document.getElementById('atend-alvara').innerText = data.contagem_alvara || 0;
+            document.getElementById('atend-divida').innerText = data.contagem_divida || 0;
+            document.getElementById('atend-certidoes').innerText = data.contagem_certidoes || 0;
+            document.getElementById('atend-cadastro').innerText = data.contagem_cadastro || 0;
         }
     } catch (e) {
         console.error("Erro ao buscar dados do dashboard tributário");

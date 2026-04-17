@@ -281,7 +281,7 @@ def dashboard_api():
             "aguardando": db.query(Senha).filter_by(setor=setor, status="aguardando").count(),
             "atendimento": db.query(Senha).filter_by(setor=setor, status="em atendimento").count(),
             "finalizado": db.query(Senha).filter_by(setor=setor, status="finalizado").count(),
-
+                #=====SAUDE===========================
             "contagem_clinico": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="clinico geral").count(),
 
             "contagem_pediatria": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="pediatria").count(),
@@ -290,8 +290,19 @@ def dashboard_api():
 
             "contagem_odontologia": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="odontologia").count(),
 
-            "contagem_vacinas": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="vacinas").count()
+            "contagem_vacinas": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="vacinas").count(),
+                #======TRIBUTARIO=======================
+            "contagem_iptu": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="iptu").count(),
 
+            "contagem_iss": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="iss").count(),
+
+            "contagem_alvara": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="alvara").count(),
+
+            "contagem_divida ativa": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="divida ativa").count(),
+
+            "contagem_certidoes": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="certidoes").count(),
+
+            "contagem_cadastro imobiliario": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="cadastro imobiliario").count()
         })
     finally:
         db.close()
