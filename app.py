@@ -280,7 +280,18 @@ def dashboard_api():
         return jsonify({
             "aguardando": db.query(Senha).filter_by(setor=setor, status="aguardando").count(),
             "atendimento": db.query(Senha).filter_by(setor=setor, status="em atendimento").count(),
-            "finalizado": db.query(Senha).filter_by(setor=setor, status="finalizado").count()
+            "finalizado": db.query(Senha).filter_by(setor=setor, status="finalizado").count(),
+
+            "contagem_clinico": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="clinico geral").count(),
+
+            "contagem_pediatria": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="pediatria").count(),
+
+            "contagem_ortopedia": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="ortopedia").count(),
+
+            "contagem_odontologia": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="odontologia").count(),
+
+            "contagem_vacinas": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="vacinas").count()
+
         })
     finally:
         db.close()
@@ -305,18 +316,36 @@ def dados_educacao():
 @app.route('/api/cadastrar_atendimento', methods=['POST'])
 def cadastrar_atendimento():
     dados = request.json
+    codigo = dados.get('codigo')
     senha_id = dados.get('senha_id')
     especialidade = dados.get('especialidade')  # Certifique-se que o nome bate com o banco
+    nome = dados.get('nome')
+    filiacao = dados.get('filiacao')
+    nascimento = dados.get('nascimento')
+    endereco = dados.get('endereco')
 
-    # 1. Buscar a senha
-    atendimento = session.query(Senha).filter_by(id=senha_id).first()
-    if atendimento:
-        atendimento.status = 'finalizado'  # Ou o status que você usa para concluir a triagem
-        atendimento.servico = especialidade
-        atendimento.data_fim_atendimento = datetime.now()
-        session.commit()
-        return jsonify({"status": "sucesso"}), 200
-    return jsonify({"status": "erro"}), 404
+    db = Session()
+
+    try:
+        atendimento = db.query(Senha).filter_by(senha=codigo).first()
+
+        if atendimento:
+            atendimento.status = 'finalizado'
+            atendimento.servico = especialidade
+            atendimento.nome_paciente = nome
+            atendimento.filiacao = filiacao
+            atendimento.endereco = endereco
+            atendimento.data_fim_atendimento = datetime.now()
+
+            db.commit()
+            return jsonify({"status":"sucesso"}), 200
+        return jsonify({"status":"erro"}), 404
+
+    except Exception as e:
+        db.rollback()
+        return jsonify({"erro": str(e)}), 500
+    finally:
+        db.close()
 
 
 # =========================

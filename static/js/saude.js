@@ -50,24 +50,31 @@ function fecharModal() {
 //manipular o envio do formulário
 document.getElementById('formCadastro').onsubmit = async (e) => {e.preventDefault();
 
-const dados = {
-    codigo: document.getElementById('modal-senha-titulo').innerText,
-    nome: document.getElementById('cad-nome').value,
-    nascimento: document.getElementById('cad-nascimento').value,
-    filiacao: document.getElementById('cad-filiacao').value,
-    endereco: document.getElementById('cad-endereco').value,
-    especialidade: document.getElementById('cad-especialidade').value
-};
-const response = await fetch('/api/cadastrar_atendimento', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(dados)
-    });
+    const dados = {
+        codigo: document.getElementById('modal-senha-titulo').innerText,
+        nome: document.getElementById('cad-nome').value,
+        nascimento: document.getElementById('cad-nascimento').value,
+        filiacao: document.getElementById('cad-filiacao').value,
+        endereco: document.getElementById('cad-endereco').value,
+        especialidade: document.getElementById('cad-especialidade').value
+    };
 
-    if (response.ok) {
-        alert("Paciente encaminhado com sucesso!");
-        fecharModal();
-        atualizarMiniDashboard();
+    try {
+        const response = await fetch('/api/cadastrar_atendimento', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(dados)
+        });
+
+        if (response.ok) {
+            alert("Paciente encaminhado com sucesso!");
+            fecharModal();
+            atualizarMiniDashboard();
+        } else {
+            alert("erro ao cadastrar");
+        }
+    } catch (error) {
+        alert("erro de conexão");
     }
 };
 
@@ -81,7 +88,7 @@ async function atualizarMiniDashboard() {
 
             document.getElementById('count-aguardando').innerText = data.aguardando || 0;
             document.getElementById('count-atendimento').innerText = data.atendimento || 0;
-            document.getElementById('count-finalizados').inerText = data.finalizado || 0;
+            document.getElementById('count-finalizados').innerText = data.finalizado || 0;
 
             const especialidades = [
                 { id: 'clinico', count: data.contagem_clinico },
