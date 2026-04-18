@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Totem de Atendimento - Tributário</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/totem_tributario.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Totem de Atendimento - Tributário</h1>
+    <p class="sub">Selecione o serviço desejado e o tipo de atendimento</p>
+
+    <label>Selecione o serviço</label>
+
+    <select id="servicoSelect">
+        <option value="iptu">IPTU</option>
+        <option value="iss">ISS</option>
+        <option value="alvara">Alvará</option>
+        <option value="divida ativa">Dívida Ativa</option>
+        <option value="dertidoes">Certidões</option>
+        <option value="cadastro imobiliario">Cadastro Imobiliário</option>
+    </select>
+
+    <h2>Atendimento Prioritário</h2>
+
+    <div class="grid">
+        <button class="btn-prioridade" onclick="gerarSenha(1)">Idoso 80+</button>
+        <button class="btn-prioridade" onclick="gerarSenha(2)">Gestante</button>
+        <button class="btn-prioridade" onclick="gerarSenha(5)">TEA</button>
+        <button class="btn-prioridade" onclick="gerarSenha(7)">Idoso 60-79</button>
+
+        <button class="btn-normal full" onclick="gerarSenha(8)">Atendimento Convencional</button>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename= 'js/totem_tributario.js') }}"></script>
+
+</body>
+</html>

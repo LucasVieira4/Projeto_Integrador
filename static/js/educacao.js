@@ -1,46 +1,68 @@
-// 1. Função para Chamar a Próxima Senha (Igual ao Saúde)
-async function chamarSenha(setor) {
+// CHAMAR SENHA POR SERVIÇO
+async function chamarSenha(servico) {
     try {
-        const response = await fetch(`/api/chamar_proximo/${setor}`);
+        const response = await fetch(`/api/chamar_proximo/educacao/${servico}`);
         const data = await response.json();
 
         if (data.erro) {
-            alert("Não há pessoas aguardando no setor de Educação.");
+            alert("Não há pessoas aguardando para " + servico);
         } else {
-            // ATENÇÃO: Verifique se esses IDs existem no seu HTML de Educação
-            document.getElementById('senha-atual').innerText = data.codigo;
-            document.getElementById('tipo-atual').innerText = data.tipo;
 
+            // atualiza última senha chamada
+            const idUltima = servico === "atendimento geral"
+                ? "ultima-geral"
+                : "ultima-" + servico;
+
+            document.getElementById(idUltima).innerText = data.codigo;
+
+            // som
             const audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
             audio.play().catch(e => console.log("Som bloqueado"));
 
-            atualizarMiniDashboard(); // Atualiza os números após chamar
+            atualizarMiniDashboard();
         }
+
     } catch (error) {
-        console.error("Erro ao processar chamada:", error);
+        console.error("Erro ao chamar senha:", error);
     }
 }
 
-// 2. Função para atualizar os cards (Adaptada para os IDs do seu HTML de Educação)
+
+// ATUALIZA DASHBOARD
 async function atualizarMiniDashboard() {
     try {
-        // Usamos a rota geral /api/dashboard que já verifica o setor na sessão (Python)
         const response = await fetch('/api/dashboard');
         const data = await response.json();
 
-        if (data && !data.erro) {
-            // AQUI ESTÁ O PULO DO GATO:
-            // No seu HTML de Educação, os IDs são 'aguardando', 'atendimento', 'finalizados'
-            // Sem o prefixo "count-" que você usou na Saúde.
-            document.getElementById('aguardando').innerText = data.aguardando || 0;
-            document.getElementById('atendimento').innerText = data.atendimento || 0;
-            document.getElementById('finalizados').innerText = data.finalizado || 0;
-        }
-    } catch (e) {
-        console.log("Erro ao buscar dados do dashboard");
+        if (data.erro) return;
+
+        // cards superiores
+        document.getElementById('aguardando').innerText = data.aguardando || 0;
+        document.getElementById('atendimento').innerText = data.atendimento || 0;
+        document.getElementById('finalizados').innerText = data.finalizado || 0;
+
+        // filas aguardando
+        document.getElementById('fila-matriculas').innerText = data.fila_matriculas || 0;
+        document.getElementById('fila-documentos').innerText = data.fila_documentos || 0;
+        document.getElementById('fila-transporte').innerText = data.fila_transporte || 0;
+        document.getElementById('fila-creches').innerText = data.fila_creches || 0;
+        document.getElementById('fila-inclusao').innerText = data.fila_inclusao || 0;
+        document.getElementById('fila-geral').innerText = data.fila_geral || 0;
+
+        // em atendimento
+        document.getElementById('atend-matriculas').innerText = data.atend_matriculas || 0;
+        document.getElementById('atend-documentos').innerText = data.atend_documentos || 0;
+        document.getElementById('atend-transporte').innerText = data.atend_transporte || 0;
+        document.getElementById('atend-creches').innerText = data.atend_creches || 0;
+        document.getElementById('atend-inclusao').innerText = data.atend_inclusao || 0;
+        document.getElementById('atend-geral').innerText = data.atend_geral || 0;
+
+    } catch (error) {
+        console.error("Erro ao atualizar painel");
     }
 }
 
-// 3. Inicialização
+
+// AUTO UPDATE
 setInterval(atualizarMiniDashboard, 5000);
 window.onload = atualizarMiniDashboard;

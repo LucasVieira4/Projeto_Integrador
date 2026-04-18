@@ -42,22 +42,51 @@
         </section>
 
         <section class="controle-atendimento" style="margin-bottom: 30px;">
-            <div class="mesa-card painel-chamada">
-                <div class="mesa-info">
-                    <h2 style="margin: 0; color: #1c2b4a;">Controle de Chamada</h2>
-                    <p style="font-size: 1.1rem;">Setor: <strong style="color: #27ae60;">Educação</strong></p>
-                </div>
+           <h2 class="section-title">Controle de Atendimento</h2>
 
-                <div id="painel-senha" style="text-align: center; min-width: 250px; background: white; padding: 15px; border-radius: 10px; border: 1px solid #ddd;">
-                    <div style="font-size: 0.8rem; color: #888; letter-spacing: 1px;">ÚLTIMA SENHA CHAMADA</div>
-                    <div id="senha-atual" style="font-size: 3.5rem; font-weight: 900; color: #e74c3c; line-height: 1;">---</div>
-                    <div id="tipo-atual" style="font-size: 1.1rem; color: #555; margin-top: 5px;">Aguardando ação...</div>
+            <div class="servicos">
+                <div class="servico">
+                    <h4>Matrículas</h4>
+                    <span id="fila-matriculas">0</span>
+                    <p>aguardando</p>
+                    <small>Última: <span id="ultima-matriculas">---</span></small>
+                    <button onclick="chamarSenha('matriculas')">CHAMAR</button>
                 </div>
-
-                <button onclick="chamarSenha('educacao')" class="btn-chamar"
-                        style="padding: 20px 40px; font-size: 1.3rem; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);">
-                    CHAMAR PRÓXIMO
-                </button>
+                <div class="servico">
+                    <h4>Documentos</h4>
+                    <span id="fila-documentos">0</span>
+                    <p>aguardando</p>
+                    <small>Última: <span id="ultima-documentos">---</span></small>
+                    <button onclick="chamarSenha('documentos')">CHAMAR</button>
+                </div>
+                <div class="servico">
+                    <h4>Transporte Escolar</h4>
+                    <span id="fila-transporte">0</span>
+                    <p>aguardando</p>
+                    <small>Última: <span id="ultima-transporte">---</span></small>
+                    <button onclick="chamarSenha('transporte')">CHAMAR</button>
+                </div>
+                <div class="servico">
+                    <h4>Creches</h4>
+                    <span id="fila-creches">0</span>
+                    <p>aguardando</p>
+                    <small>Última: <span id="ultima-creches">---</span></small>
+                    <button onclick="chamarSenha('creches')">CHAMAR</button>
+                </div>
+                <div class="servico">
+                    <h4>Inclusão Escolar</h4>
+                    <span id="fila-inclusao">0</span>
+                    <p>aguardando</p>
+                    <small>Última: <span id="ultima-inclusao">---</span></small>
+                    <button onclick="chamarSenha('inclusao')">CHAMAR</button>
+                </div>
+                <div class="servico">
+                    <h4>Atendimento Geral</h4>
+                    <span id="fila-geral">0</span>
+                    <p>aguardando</p>
+                    <small>Última: <span id="ultima-geral">---</span></small>
+                    <button onclick="chamarSenha('atendimento geral')">CHAMAR</button>
+                </div>
             </div>
         </section>
 

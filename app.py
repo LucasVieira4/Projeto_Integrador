@@ -73,6 +73,8 @@ def obter_fila_ordenada(prioritarios, normais, total_ja_chamados=0):
 # APIs
 # =========================
 
+#=====Painel Chamadas=======
+
 @app.route('/api/painel_completo')
 def painel_completo():
     db = Session()
@@ -144,12 +146,12 @@ def totem():
 
 @app.route('/totem/<setor>')
 def totem_setor(setor):
-    setores_validos = ['saude', 'educação', 'tributario']
+    setores_validos = ['saude', 'educacao', 'tributario']
     if setor not in setores_validos:
         return redirect(url_for('totem'))
     return render_template(f"totem_{setor}.html", setor=setor)
 
-
+#======logar-saude========
 @app.route("/saude")
 def saude():
     if 'usuario_logado' not in session:
@@ -159,7 +161,7 @@ def saude():
         return redirect(url_for('acesso_negado'))
 
     return render_template("saude.html")
-
+#======logar-educacao==========
 @app.route("/educacao")
 def educacao():
     if 'usuario_logado' not in session:
@@ -170,7 +172,7 @@ def educacao():
 
     return render_template("educacao.html")
 
-
+#==========logar-tributario========
 @app.route("/tributario")
 def tributario():
     if 'usuario_logado' not in session:
@@ -181,7 +183,7 @@ def tributario():
 
     return render_template("tributario.html")
 
-
+#=====relatorio=========
 @app.route('/relatorio')
 def relatorio():
     if 'usuario_logado' not in session:
@@ -189,25 +191,53 @@ def relatorio():
 
     return render_template("relatorio.html")
 
-
+#=======SENHAS==========
 @app.route("/api/gerar_senha", methods=['POST'])
 def gerar_senha():
     dados = request.json
-    setor = dados.get('setor', 'saude')
+
+    setor = dados.get('setor', 'saude').lower()
+    servico = dados.get('servico', 'clinico geral').lower()
+
     prioridade_origem = int(dados.get('prioridade', 8))
 
-    prefixos = {1: "I+", 2: "G", 3: "L", 4: "C", 5: "T", 6: "D", 7: "I", 8: "N"}
-    nomes = {
-        1: "Idoso 80+", 2: "Gestante", 3: "Lactante",
-        4: "Criança de Colo", 5: "TEA", 6: "Deficiente",
-        7: "Idoso", 8: "Normal"
+    prefixos = {
+        1: "I+",
+        2: "G",
+        3: "L",
+        4: "C",
+        5: "T",
+        6: "D",
+        7: "I",
+        8: "N"
     }
 
-    pesos = {1: 5, 5: 4, 6: 4, 7: 4, 2: 3, 3: 3, 4: 3, 8: 1}
+    nomes = {
+        1: "Idoso 80+",
+        2: "Gestante",
+        3: "Lactante",
+        4: "Criança de Colo",
+        5: "TEA",
+        6: "Deficiente",
+        7: "Idoso",
+        8: "Normal"
+    }
+
+    pesos = {
+        1: 5,
+        5: 4,
+        6: 4,
+        7: 4,
+        2: 3,
+        3: 3,
+        4: 3,
+        8: 1
+    }
 
     codigo = obter_proximo_codigo(prefixos[prioridade_origem], setor)
 
     db = Session()
+
     try:
         nova = Senha(
             senha=codigo,
@@ -215,57 +245,74 @@ def gerar_senha():
             prioridade=pesos[prioridade_origem],
             status="aguardando",
             setor=setor,
-            servico="clinico geral"
+            servico=servico
         )
+
         db.add(nova)
         db.commit()
 
-        return jsonify({"codigo": codigo, "tipo": nomes[prioridade_origem]})
+        return jsonify({
+            "codigo": codigo,
+            "tipo": nomes[prioridade_origem]
+        })
+
     except Exception as e:
         db.rollback()
         return jsonify({"erro": str(e)}), 500
+
     finally:
         db.close()
-
-
-@app.route("/api/chamar_proximo/<setor>")
-def chamar_proximo(setor):
+#=====funcionalidade interna dos dashboard========
+@app.route("/api/chamar_proximo/<setor>/<servico>")
+def chamar_proximo(setor, servico):
     db = Session()
     setor = setor.lower()
+    servico = servico.lower()
 
     try:
         total = db.query(Senha).filter(
             Senha.setor == setor,
+            Senha.servico == servico,
             Senha.status.in_(['em atendimento', 'finalizado'])
         ).count()
 
         proximo_num = total + 1
-
+           #regra da prioridade
         if proximo_num % 3 == 0:
-            proxima = db.query(Senha).filter_by(
-                setor=setor, status="aguardando", prioridade=1
+            proxima = db.query(Senha).filter(
+                Senha.setor == setor,
+                Senha.servico == servico,
+                Senha.status == "aguardando",
+                Senha.prioridade == 1
             ).order_by(Senha.id.asc()).first()
         else:
             proxima = db.query(Senha).filter(
                 Senha.setor == setor,
+                Senha.servico == servico,
                 Senha.status == "aguardando",
                 Senha.prioridade > 1
             ).order_by(Senha.prioridade.desc(), Senha.id.asc()).first()
-
+           # fallback
         if not proxima:
-            proxima = db.query(Senha).filter_by(
-                setor=setor, status="aguardando"
+            proxima = db.query(Senha).filter(
+                Senha.setor == setor,
+                Senha.servico == servico,
+                Senha.status == "aguardando"
             ).order_by(Senha.id.asc()).first()
 
         if proxima:
-            db.query(Senha).filter_by(
-                setor=setor, status="em atendimento"
+            db.query(Senha).filter(
+                Senha.setor == setor,
+                Senha.servico == servico,
+                Senha.status =="em atendimento"
             ).update({"status": "finalizado"})
 
             proxima.status = "em atendimento"
             db.commit()
 
-            return jsonify({"codigo": proxima.senha, "tipo": proxima.tipo})
+            return jsonify({"codigo": proxima.senha,
+                            "servico": proxima.servico
+            })
 
         return jsonify({"erro": "Fila vazia"}), 404
 
