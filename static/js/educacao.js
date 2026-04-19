@@ -9,7 +9,7 @@ async function chamarSenha(servico) {
         } else {
 
             // atualiza última senha chamada
-            const idUltima = servico === "atendimento geral"
+            const idUltima = servico === "geral"
                 ? "ultima-geral"
                 : "ultima-" + servico;
 
@@ -42,12 +42,12 @@ async function atualizarMiniDashboard() {
         document.getElementById('finalizados').innerText = data.finalizado || 0;
 
         // filas aguardando
-        document.getElementById('fila-matriculas').innerText = data.fila_matriculas || 0;
-        document.getElementById('fila-documentos').innerText = data.fila_documentos || 0;
-        document.getElementById('fila-transporte').innerText = data.fila_transporte || 0;
-        document.getElementById('fila-creches').innerText = data.fila_creches || 0;
-        document.getElementById('fila-inclusao').innerText = data.fila_inclusao || 0;
-        document.getElementById('fila-geral').innerText = data.fila_geral || 0;
+        document.getElementById('fila-matriculas').innerText = data.aguardando_matriculas || 0;
+        document.getElementById('fila-documentos').innerText = data.aguardando_documentos || 0;
+        document.getElementById('fila-transporte').innerText = data.aguardando_transporte || 0;
+        document.getElementById('fila-creches').innerText = data.aguardando_creches || 0;
+        document.getElementById('fila-inclusao').innerText = data.aguardando_inclusao || 0;
+        document.getElementById('fila-geral').innerText = data.aguardando_geral || 0;
 
         // em atendimento
         document.getElementById('atend-matriculas').innerText = data.atend_matriculas || 0;

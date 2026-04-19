@@ -337,7 +337,7 @@ def dashboard_api():
             "atendimento": db.query(Senha).filter_by(setor=setor, status="em atendimento").count(),
             "finalizado": db.query(Senha).filter_by(setor=setor, status="finalizado").count(),
                 #=====SAUDE===========================
-            "contagem_clinico": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="clinico geral").count(),
+            "contagem_clinico": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="clinico_geral").count(),
 
             "contagem_pediatria": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="pediatria").count(),
 
@@ -353,23 +353,29 @@ def dashboard_api():
 
             "contagem_alvara": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="alvara").count(),
 
-            "contagem_divida ativa": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="divida ativa").count(),
+            "contagem_divida_ativa": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="divida_ativa").count(),
 
             "contagem_certidoes": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="certidoes").count(),
 
-            "contagem_cadastro imobiliario": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="cadastro imobiliario").count(),
+            "contagem_cadastro_imobiliario": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="cadastro_imobiliario").count(),
                  #========EDUCACAO=======================
+            "aguardando_matriculas": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="matriculas").count(),
             "contagem_matriculas": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="matriculas").count(),
 
+            "aguardando_documentos": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="documentos").count(),
             "contagem_documentos": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="documentos").count(),
 
+            "aguardando_transporte": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="transporte").count(),
             "contagem_transporte": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="transporte").count(),
 
+            "aguardando_creches": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="creches").count(),
             "contagem_creches": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="creches").count(),
 
+            "aguardando_inclusao": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="inclusao").count(),
             "contagem_inclusao": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="inclusao").count(),
 
-            "contagem_geral": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="atendimento geral").count()
+            "aguardando_geral": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="geral").count(),
+            "contagem_geral": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="geral").count()
         })
     finally:
         db.close()
