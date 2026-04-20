@@ -198,7 +198,7 @@ def gerar_senha():
 
     setor = dados.get('setor', 'saude').lower()
     servico = dados.get('servico', 'clinico geral').lower()
-
+    print("servico =", servico)
     prioridade_origem = int(dados.get('prioridade', 8))
 
     prefixos = {
@@ -331,6 +331,11 @@ def dashboard_api():
     db = Session()
     try:
         setor = session.get('setor')
+        db.query(Senha).filter(
+            Senha.setor == setor,
+            Senha.status == "em atendimento"
+        ).update({"status": "finalizado"}, synchronize_session=False)
+        db.commit()
 
         return jsonify({
             "aguardando": db.query(Senha).filter_by(setor=setor, status="aguardando").count(),

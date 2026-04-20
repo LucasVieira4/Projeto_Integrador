@@ -25,7 +25,7 @@ class Senha(Base):
     servico = Column(Enum(
         'clinico geral', 'pediatria', 'ortopedia', 'odontologia', 'vacinas',
         'iptu', 'iss', 'alvara', 'divida ativa', 'certidoes', 'cadastro imobiliario',
-        'matriculas', 'documentos', 'transporte', 'creches', 'inclusão', 'atendimento geral'
+        'matriculas', 'documentos', 'transporte', 'creches', 'inclusao', 'geral'
     ), nullable=False)
 
     tipo = Column(String(50), nullable=False)
