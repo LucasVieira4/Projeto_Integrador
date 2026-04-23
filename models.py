@@ -24,7 +24,7 @@ class Senha(Base):
     setor = Column(Enum('educacao', 'saude', 'tributario'), nullable=False)
     servico = Column(Enum(
         'clinico geral', 'pediatria', 'ortopedia', 'odontologia', 'vacinas',
-        'iptu', 'iss', 'alvara', 'divida ativa', 'certidoes', 'cadastro imobiliario',
+        'iptu', 'iss', 'alvara', 'divida', 'certidoes', 'cadastro',
         'matriculas', 'documentos', 'transporte', 'creches', 'inclusao', 'geral'
     ), nullable=False)
 

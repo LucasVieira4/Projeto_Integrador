@@ -352,17 +352,23 @@ def dashboard_api():
 
             "contagem_vacinas": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="vacinas").count(),
                 #======TRIBUTARIO=======================
+            "aguardando_iptu": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="iptu").count(),
             "contagem_iptu": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="iptu").count(),
 
+            "aguardando_iss": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="iss").count(),
             "contagem_iss": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="iss").count(),
 
+            "aguardando_alvara": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="alvara").count(),
             "contagem_alvara": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="alvara").count(),
 
-            "contagem_divida_ativa": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="divida_ativa").count(),
+            "aguardando_divida": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="divida").count(),
+            "contagem_divida": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="divida").count(),
 
+            "aguardando_certidoes": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="certidoes").count(),
             "contagem_certidoes": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="certidoes").count(),
 
-            "contagem_cadastro_imobiliario": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="cadastro_imobiliario").count(),
+            "aguardando_cadastro": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="cadastro").count(),
+            "contagem_cadastro": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="cadastro").count(),
                  #========EDUCACAO=======================
             "aguardando_matriculas": db.query(Senha).filter_by(setor=setor, status="aguardando", servico="matriculas").count(),
             "contagem_matriculas": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="matriculas").count(),

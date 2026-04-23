@@ -45,54 +45,51 @@
                 </div>
             </div>
 
-            <div class="painel-controle" style="background: #fff; padding: 20px; border-radius: 10px; border: 2px solid #f39c12; margin: 20px 0 30px 0; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                <div>
-                    <h3 style="margin: 0; color: #1c2b4a;">Painel de Chamada</h3>
-                    <p style="margin: 5px 0 0 0; color: #666;">Setor: <strong>Tributário</strong></p>
-                </div>
 
-                <div style="text-align: center; background: #fef5e7; padding: 10px 30px; border-radius: 8px; border: 1px solid #f39c12;">
-                    <span style="display: block; font-size: 0.8rem; color: #845d1a;">SENHA ATUAL</span>
-                    <strong id="senha-atual" style="font-size: 2.2rem; color: #d35400;">---</strong>
-                    <span id="tipo-atual" style="display: block; font-size: 0.9rem; font-weight: bold; color: #333;">Aguardando Chamada</span>
-                </div>
-
-                <button onclick="chamarSenha('tributario')" style="background: #e67e22; color: white; border: none; padding: 15px 40px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.2rem; transition: 0.3s;">
-                    CHAMAR PRÓXIMO
-                </button>
-            </div>
 
             <h3>Serviços do Tributário</h3>
             <div class="servicos">
                 <div class="servico">
                     <h4>IPTU</h4>
                     <span id="atend-iptu">0</span>
-                    <p>em atendimento</p>
+                    <p>aguardando</p>
+                    <small>Última: <span id="ultima-iptu"></span>---</small>
+                    <button onclick="chamarSenha('iptu')">CHAMAR</button>
                 </div>
                 <div class="servico">
                     <h4>ISS</h4>
                     <span id="atend-iss">0</span>
-                    <p>em atendimento</p>
+                    <p>aguardando</p>
+                    <small>Última: <span id="ultima-iss"></span>---</small>
+                    <button onclick="chamarSenha('iss')">CHAMAR</button>
                 </div>
                 <div class="servico">
                     <h4>Alvará</h4>
                     <span id="atend-alvara">0</span>
-                    <p>em atendimento</p>
+                    <p>aguardando</p>
+                    <small>Última: <span id="ultima-alvara"></span>---</small>
+                    <button onclick="chamarSenha('alvara')">CHAMAR</button>
                 </div>
                 <div class="servico">
                     <h4>Dívida Ativa</h4>
                     <span id="atend-divida">0</span>
                     <p>em atendimento</p>
+                    <small>Última: <span id="ultima-divida"></span>---</small>
+                    <button onclick="chamarSenha('divida')">CHAMAR</button>
                 </div>
                 <div class="servico">
                     <h4>Certidões</h4>
                     <span id="atend-certidoes">0</span>
                     <p>em atendimento</p>
+                    <small>Última: <span id="ultima-certidoes"></span>---</small>
+                    <button onclick="chamarSenha('certidoes')">CHAMAR</button>
                 </div>
                 <div class="servico">
                     <h4>Cadastro Imobiliário</h4>
                     <span id="atend-cadastro">0</span>
                     <p>em atendimento</p>
+                    <small>Última: <span id="ultima-cadastro"></span>---</small>
+                    <button onclick="chamarSenha('cadastro')">CHAMAR</button>
                 </div>
             </div>
         </div>
