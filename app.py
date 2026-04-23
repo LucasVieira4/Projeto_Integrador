@@ -331,11 +331,7 @@ def dashboard_api():
     db = Session()
     try:
         setor = session.get('setor')
-        db.query(Senha).filter(
-            Senha.setor == setor,
-            Senha.status == "em atendimento"
-        ).update({"status": "finalizado"}, synchronize_session=False)
-        db.commit()
+
 
         return jsonify({
             "aguardando": db.query(Senha).filter_by(setor=setor, status="aguardando").count(),

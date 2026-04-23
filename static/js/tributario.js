@@ -1,25 +1,26 @@
 // 1. Função para Chamar a Próxima Senha (Seguindo o padrão da Educação)
-async function chamarSenha(setor) {
+async function chamarSenha(servico) {
     try {
         // Usando a mesma rota que funcionou na educação
-        const response = await fetch(`/api/chamar_proximo/${setor}`);
+        const response = await fetch(`/api/chamar_proximo/tributario/${servico}`);
         const data = await response.json();
 
         if (data.erro) {
-            alert("Não há pessoas aguardando no setor de Tributação.");
-        } else {
-            // Mapeando os IDs do seu HTML do Tributário
-            document.getElementById('senha-atual').innerText = data.codigo;
-            document.getElementById('tipo-atual').innerText = data.tipo;
-
-            // Alerta sonoro
-            const audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
-            audio.play().catch(e => console.log("Som bloqueado pelo navegador"));
-
-            atualizarStatus(); // Atualiza os números após chamar
+            alert("Não há pessoas aguardando.");
+            return;
         }
+         const campo = document.getElementById(`ultima-${servico}`);
+         if (campo){
+             campo.innerText = data.codigo;
+         }
+            // Alerta sonoro
+         const audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
+         audio.play().catch(e => console.log("Som bloqueado pelo navegador"));
+
+         atualizarStatus(); // Atualiza os números após chamar
+
     } catch (error) {
-        console.error("Erro ao processar chamada no tributário:", error);
+        console.error("Erro:", error);
     }
 }
 
@@ -36,12 +37,12 @@ async function atualizarStatus() {
             document.getElementById('count-atendimento').innerText = data.atendimento || 0;
             document.getElementById('count-finalizados').innerText = data.finalizado || 0;
 
-            document.getElementById('atend-iptu').innerText = data.contagem_iptu || 0;
-            document.getElementById('atend-iss').innerText = data.contagem_iss || 0;
-            document.getElementById('atend-alvara').innerText = data.contagem_alvara || 0;
-            document.getElementById('atend-divida').innerText = data.contagem_divida || 0;
-            document.getElementById('atend-certidoes').innerText = data.contagem_certidoes || 0;
-            document.getElementById('atend-cadastro').innerText = data.contagem_cadastro || 0;
+            document.getElementById('atend-iptu').innerText = data.aguardando_iptu || 0;
+            document.getElementById('atend-iss').innerText = data.aguardando_iss || 0;
+            document.getElementById('atend-alvara').innerText = data.aguardando_alvara || 0;
+            document.getElementById('atend-divida').innerText = data.aguardando_divida || 0;
+            document.getElementById('atend-certidoes').innerText = data.aguardando_certidoes || 0;
+            document.getElementById('atend-cadastro').innerText = data.aguardando_cadastro || 0;
         }
     } catch (e) {
         console.error("Erro ao buscar dados do dashboard tributário");
