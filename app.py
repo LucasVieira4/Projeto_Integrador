@@ -266,33 +266,64 @@ def gerar_senha():
 @app.route("/api/chamar_proximo/<setor>/<servico>")
 def chamar_proximo(setor, servico):
     db = Session()
+
     setor = setor.lower()
     servico = servico.lower()
 
     try:
-        total = db.query(Senha).filter(
+        # ==========================================
+        # 1️⃣ FINALIZA atendimento atual
+        # ==========================================
+        atual = db.query(Senha).filter(
             Senha.setor == setor,
             Senha.servico == servico,
-            Senha.status.in_(['em atendimento', 'finalizado'])
-        ).count()
+            Senha.status == "em atendimento"
+        ).first()
 
-        proximo_num = total + 1
-           #regra da prioridade
+        if atual:
+            atual.status = "finalizado"
+
+        # ==========================================
+        # 2️⃣ DEFINE número da próxima chamada
+        # regra 2 prioritários para 1 normal
+        # ==========================================
+        proximo_num = db.query(Senha).filter(
+            Senha.setor == setor,
+            Senha.servico == servico,
+            Senha.status.in_(["em atendimento", "finalizado"])
+        ).count() + 1
+
+        # ==========================================
+        # 3️⃣ REGRA DE PRIORIDADE
+        # atendimento 3,6,9... = normal
+        # demais = prioritário
+        # ==========================================
         if proximo_num % 3 == 0:
+
+            # normal
             proxima = db.query(Senha).filter(
                 Senha.setor == setor,
                 Senha.servico == servico,
                 Senha.status == "aguardando",
                 Senha.prioridade == 1
             ).order_by(Senha.id.asc()).first()
+
         else:
+
+            # prioritário
             proxima = db.query(Senha).filter(
                 Senha.setor == setor,
                 Senha.servico == servico,
                 Senha.status == "aguardando",
                 Senha.prioridade > 1
-            ).order_by(Senha.prioridade.desc(), Senha.id.asc()).first()
-           # fallback
+            ).order_by(
+                Senha.prioridade.desc(),
+                Senha.id.asc()
+            ).first()
+
+        # ==========================================
+        # 4️⃣ FALLBACK
+        # ==========================================
         if not proxima:
             proxima = db.query(Senha).filter(
                 Senha.setor == setor,
@@ -300,28 +331,60 @@ def chamar_proximo(setor, servico):
                 Senha.status == "aguardando"
             ).order_by(Senha.id.asc()).first()
 
+        # ==========================================
+        # 5️⃣ CHAMA próxima senha
+        # ==========================================
         if proxima:
-            db.query(Senha).filter(
-                Senha.setor == setor,
-                Senha.servico == servico,
-                Senha.status =="em atendimento"
-            ).update({"status": "finalizado"})
-
             proxima.status = "em atendimento"
+
             db.commit()
 
-            return jsonify({"codigo": proxima.senha,
-                            "servico": proxima.servico
+            return jsonify({
+                "codigo": proxima.senha,
+                "servico": proxima.servico
             })
+
+        # ==========================================
+        # 6️⃣ FILA VAZIA
+        # salva finalização da última senha
+        # ==========================================
+        db.commit()
 
         return jsonify({"erro": "Fila vazia"}), 404
 
     except Exception as e:
         db.rollback()
         return jsonify({"erro": str(e)}), 500
+
     finally:
         db.close()
+#======rota especifica dash saude===========
+@app.route("/api/chamar_proximo/saude")
+def chamar_proximo_saude():
+    db = Session()
 
+    try:
+        proxima = db.query(Senha).filter(
+            Senha.setor == "saude",
+            Senha.status == "aguardando"
+        ).order_by(
+            Senha.prioridade.desc(),
+            Senha.id.asc()
+        ).first()
+
+        if not proxima:
+            return jsonify({"erro": "Fila vazia"}), 404
+
+        proxima.status = "em atendimento"
+        db.commit()
+
+        return jsonify({
+            "codigo": proxima.senha,
+            "tipo": proxima.tipo
+        })
+
+    finally:
+        db.close()
 
 @app.route("/api/dashboard")
 def dashboard_api():
@@ -338,7 +401,7 @@ def dashboard_api():
             "atendimento": db.query(Senha).filter_by(setor=setor, status="em atendimento").count(),
             "finalizado": db.query(Senha).filter_by(setor=setor, status="finalizado").count(),
                 #=====SAUDE===========================
-            "contagem_clinico": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="clinico_geral").count(),
+            "contagem_clinico": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="clinico geral").count(),
 
             "contagem_pediatria": db.query(Senha).filter_by(setor=setor, status="finalizado", servico="pediatria").count(),
 
