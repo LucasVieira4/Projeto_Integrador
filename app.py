@@ -190,16 +190,23 @@ def relatorio():
         return redirect(url_for('login'))
 
     return render_template('relatorio.html')
+#=======relatorio por setor==========
 @app.route('/api/relatorio/<setor>')
 def api_relatorio(setor):
+    if not session.get('usuario_logado'):
+        return jsonify({"erro": "não logado"}), 401
 
     db = Session()
 
     try:
+
+        setor = session.get(setor)
+
         total = db.execute(text("""
         SELECT COUNT(*) AS total
-        FROM senhas
+        FROM atendimentos
         WHERE setor= :setor
+        AND status = 'finalizado'
         """), {"setor": setor}).scalar()
 
         return jsonify({
@@ -211,6 +218,106 @@ def api_relatorio(setor):
 
     finally:
         db.close()
+
+#========STATUS GERAL====================
+@app.route("/api/status/geral")
+def api_status_geral():
+    db = Session()
+    try:
+        dados = db.execute(text("""
+            SELECT status, COUNT(*) as total
+            FROM atendimentos
+            GROUP BY status
+        """)).fetchall()
+
+        resultado = {
+            "aguardando": 0,
+            "atendimento": 0,
+            "finalizado": 0
+        }
+
+        for status, total in dados:
+            if status == "aguardando":
+                resultado["aguardando"] = total
+            elif status == "em atendimento":
+                resultado["atendimento"] = total
+            elif status == "finalizado":
+                resultado["finalizado"] = total
+
+        return jsonify(resultado)
+
+    finally:
+        db.close()
+#======Rota Status por setor=============
+@app.route("/api/status")
+def api_status():
+    db = Session()
+    try:
+        setor = session.get('setor')
+
+        dados = db.execute(text("""
+            SELECT status, COUNT(*)
+            FROM atendimentos
+            WHERE setor = :setor
+            GROUP BY status
+        """), {"setor": setor}).fetchall()
+
+        resultado = {
+            "aguardando": 0,
+            "atendimento": 0,
+            "finalizado": 0
+        }
+
+        for status, total in dados:
+            if status == "aguardando":
+                resultado["aguardando"] = total
+            elif status == "em atendimento":
+                resultado["atendimento"] = total
+            elif status == "finalizado":
+                resultado["finalizado"] = total
+
+        return jsonify(resultado)
+
+    finally:
+        db.close()
+#=======Rota para dinamizar gráficos=====
+@app.route("/api/pizza/<setor>")
+def api_pizza(setor):
+    db = Session()
+
+    try:
+        if setor == "saude":
+            dados = {"Clinico Geral": db.query(Senha).filter_by(setor= "saude", status= "finalizado", servico= "clinico geral").count(),
+                     "Pediatria": db.query(Senha).filter_by(setor="saude", status= "finalizado", servico= "pediatria").count(),
+                     "Ortopedia": db.query(Senha).filter_by(setor= "saude", status= "finalizado", servico= "ortopedia").count(),
+                     "Odontologia": db.query(Senha).filter_by(setor= "saude", status= "finalizado", servico= "odontologia").count(),
+                     "Vacinas": db.query(Senha).filter_by(setor= "saude", status= "finalizado", servico= "vacinas").count()
+            }
+        elif setor == "tributario":
+            dados = {"IPTU": db.query(Senha).filter_by(setor= "tributario", status= "finalizado", servico= "iptu").count(),
+                     "ISS": db.query(Senha).filter_by(setor= "tributario", status= "finalizado", servico= "iss").count(),
+                     "Alvará": db.query(Senha).filter_by(setor= "tributario", status= "finalizado", servico= "alvara").count(),
+                     "Divida": db.query(Senha).filter_by(setor="tributario", status= "finalizado", servico= "divida").count(),
+                     "Certidões": db.query(Senha).filter_by(setor= "tributario", status= "finalizado", servico= "certidoes").count(),
+                     "Cadastro": db.query(Senha).filter_by(setor= "tributario", status= "finalizado", servico= "cadastro").count()
+            }
+        elif setor == "educacao":
+            dados = {"Matrículas": db.query(Senha).filter_by(setor= "educacao", status= "finalizado", servico= "matriculas").count(),
+                     "Documentos": db.query(Senha).filter_by(setor= "educacao", status= "finalizado", servico= "documentos").count(),
+                     "Transporte": db.query(Senha).filter_by(setor= "educacao", status= "finalizado", servico= "transporte").count(),
+                     "Creches": db.query(Senha).filter_by(setor= "educacao", status= "finalizado", servico= "creches").count(),
+                     "Inclusão": db.query(Senha).filter_by(setor= "educacao", status= "finalizado", servico= "inclusao").count(),
+                     "Geral": db.query(Senha).filter_by(setor= "educacao", status= "finalizado", servico= "geral").count()
+            }
+        else:
+            dados = {}
+
+        return jsonify(dados)
+    finally:
+        db.close()
+
+
+
 
 
 #=======SENHAS==========
