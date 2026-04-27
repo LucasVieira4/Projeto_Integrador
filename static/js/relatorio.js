@@ -2,8 +2,13 @@ async function buscarDados(setor, elementoId) {
     try {
         const response = await fetch(`/api/relatorio/${setor}`);
         const dados = await response.json();
-        document.getElementById(elementoId).innerText = dados.total_atendimentos;
-        return dados.total_atendimentos;
+
+        const total = dados.total_atendimentos || 0;
+
+        document.getElementById(elementoId).innerText = total;
+
+        return total;
+
     } catch (error) {
         console.error("Erro:", error);
         return 0;

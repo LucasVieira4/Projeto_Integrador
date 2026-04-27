@@ -189,7 +189,29 @@ def relatorio():
     if 'usuario_logado' not in session:
         return redirect(url_for('login'))
 
-    return render_template("relatorio.html")
+    return render_template('relatorio.html')
+@app.route('/api/relatorio/<setor>')
+def api_relatorio(setor):
+
+    db = Session()
+
+    try:
+        total = db.execute(text("""
+        SELECT COUNT(*) AS total
+        FROM senhas
+        WHERE setor= :setor
+        """), {"setor": setor}).scalar()
+
+        return jsonify({
+            "total_atendimentos": total
+        })
+
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+    finally:
+        db.close()
+
 
 #=======SENHAS==========
 @app.route("/api/gerar_senha", methods=['POST'])
