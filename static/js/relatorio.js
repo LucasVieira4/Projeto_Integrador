@@ -1,74 +1,128 @@
 async function buscarDados(setor, elementoId) {
+
     try {
-         const response = await fetch(`/api/relatorio/${setor}`);
-         const dados = await response.json();
 
-         const total = dados.total_atendimentos || 0;
+        const response = await fetch(`/api/relatorio/${setor}`);
+        const dados = await response.json();
 
-         document.getElementById(elementoId).innerText = total;
+        const total = dados.total_atendimentos || 0;
 
-         return total;
+        document.getElementById(elementoId).innerText = total;
+
+        return total;
 
     } catch (error) {
+
         console.error("Erro:", error);
         return 0;
-
     }
 }
 
 async function inicializarDashboard() {
-    const [edu, sau, tri] = await Promise.all([
-         buscarDados('educacao', 'total-educacao'),
-         buscarDados('saude', 'total-saude'),
-         buscarDados('tributario', 'total-tributario')
-    ]);
-/* ==============================
-       BUSCA DADOS DINÂMICOS
-============================== */
-    const statusResp = await fetch('/api/status/geral');
+
+    // ==============================
+    // TOTAL SETOR
+    // ==============================
+
+    const total = await buscarDados(
+        setor,
+        `total-${setor}`
+    );
+
+    // ==============================
+    // STATUS
+    // ==============================
+
+    const statusResp = await fetch('/api/status');
     const status = await statusResp.json();
-    const pizzaResp = await fetch('/api/pizza/saude');
+
+    // ==============================
+    // PIZZA
+    // ==============================
+
+    const pizzaResp = await fetch(`/api/pizza/${setor}`);
     const pizza = await pizzaResp.json();
+
     const pizzaLabels = Object.keys(pizza);
     const pizzaValores = Object.values(pizza);
-/* GRÁFICO 1 - BARRAS (SETOR) */
+
+    // ==============================
+    // DIÁRIO
+    // ==============================
+
+    const diarioResp = await fetch(`/api/diario/${setor}`);
+    const diario = await diarioResp.json();
+
+    // ==============================
+    // GRÁFICO SETOR
+    // ==============================
+
     new Chart(document.getElementById('graficoSetor'), {
+
         type: 'bar',
+
         data: {
-            labels: ['Educação', 'Saúde', 'Tributário'],
+
+            labels: [setor.toUpperCase()],
+
             datasets: [{
-                data: [edu, sau, tri],
-                backgroundColor: ['#3498db', '#e74c3c', '#2ecc71']
+                data: [total],
+                backgroundColor: ['#3498db']
             }]
         },
+
         options: {
             plugins: {
                 legend: { display: false }
             }
         }
     });
-    /* GRÁFICO 2 - STATUS */
+
+    // ==============================
+    // STATUS
+    // ==============================
+
     new Chart(document.getElementById('graficoStatus'), {
+
         type: 'bar',
+
         data: {
+
             labels: ['Aguardando', 'Em atendimento', 'Finalizado'],
+
             datasets: [{
+
                 data: [
                     status.aguardando || 0,
                     status.atendimento || 0,
                     status.finalizado || 0
                 ],
-                backgroundColor: ['#3498db', '#f39c12', '#2ecc71']
+
+                backgroundColor: [
+                    '#3498db',
+                    '#f39c12',
+                    '#2ecc71'
+                ]
             }]
         }
     });
-              /* GRÁFICO 3 - PIZZA */
+
+    // ==============================
+    // PIZZA
+    // ==============================
+
     new Chart(document.getElementById('graficoPizza'), {
+
         type: 'pie',
+
         data: {
+
             labels: pizzaLabels,
+
             datasets: [{
+
                 data: pizzaValores,
+
                 backgroundColor: [
                     '#3498db',
                     '#f39c12',
@@ -80,18 +134,31 @@ async function inicializarDashboard() {
             }]
         }
     });
-        /* GRÁFICO 4 - LINHA */
+
+    // ==============================
+    // LINHA
+    // ==============================
+
     new Chart(document.getElementById('graficoLinha'), {
+
         type: 'line',
+
         data: {
-            labels: ['01/04', '05/04', '10/04', '15/04', '20/04', '25/04'],
+
+            labels: diario.labels,
+
             datasets: [{
+
                 label: 'Atendimentos',
-                data: [12, 15, 14, 18, 22, 20],
+
+                data: diario.valores,
+
                 borderColor: '#3498db',
+
                 fill: false
             }]
         }
     });
 }
+
 inicializarDashboard();

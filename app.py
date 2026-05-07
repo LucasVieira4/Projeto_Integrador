@@ -189,36 +189,71 @@ def relatorio():
     if 'usuario_logado' not in session:
         return redirect(url_for('login'))
 
-    return render_template('relatorio.html')
+    return render_template('relatorio.html', setor='saude')
 #=======relatorio por setor==========
-@app.route('/api/relatorio/<setor>')
-def api_relatorio(setor):
-    if not session.get('usuario_logado'):
-        return jsonify({"erro": "não logado"}), 401
+@app.route("/api/diario/<setor>")
+def api_diario(setor):
 
     db = Session()
 
     try:
 
-        setor = session.get(setor)
+        dados = db.execute(text("""
+            SELECT DATE(data_emissao) as dia,
+                   COUNT(*) as total
+            FROM atendimentos
+            WHERE setor = :setor
+            GROUP BY DATE(data_emissao)
+            ORDER BY dia
+        """), {"setor": setor}).fetchall()
 
-        total = db.execute(text("""
-        SELECT COUNT(*) AS total
-        FROM atendimentos
-        WHERE setor= :setor
-        AND status = 'finalizado'
-        """), {"setor": setor}).scalar()
+        labels = []
+        valores = []
+
+        for dia, total in dados:
+            labels.append(dia.strftime('%d/%m'))
+            valores.append(total)
 
         return jsonify({
-            "total_atendimentos": total
+            "labels": labels,
+            "valores": valores
         })
-
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
 
     finally:
         db.close()
+#===============SAUDE================
+@app.route('/relatorio/saude')
+def relatorio_saude():
 
+    if session.get('setor') != 'saude':
+        return redirect(url_for('acesso_negado'))
+
+    return render_template(
+        'relatorio.html',
+        setor='saude'
+    )
+#==============EDUCACAO==================
+@app.route('/relatorio/educacao')
+def relatorio_educacao():
+
+    if session.get('setor') != 'educacao':
+        return redirect(url_for('acesso_negado'))
+
+    return render_template(
+        'relatorio.html',
+        setor='educacao'
+    )
+#=============TRIBUTARIO=================
+@app.route('/relatorio/tributario')
+def relatorio_tributario():
+
+    if session.get('setor') != 'tributario':
+        return redirect(url_for('acesso_negado'))
+
+    return render_template(
+        'relatorio.html',
+        setor='tributario'
+    )
 #========STATUS GERAL====================
 @app.route("/api/status/geral")
 def api_status_geral():
