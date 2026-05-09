@@ -704,6 +704,58 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+#===========rotas-mobile==============
+#============login====================
+
+@app.route('/mobile/login', methods=['GET', 'POST'])
+def mobile_login():
+
+    if request.method == 'POST':
+
+        cpf = request.form['cpf']
+        senha = request.form['senha']
+
+        # validar usuário futuramente
+
+        return redirect(url_for('mobile_saude'))
+
+    return render_template('mobile/login_mobile.html')
+
+#==============agendamento============================
+#========agend_saude==================================
+@app.route('/mobile/saude')
+def mobile_saude():
+
+    return render_template('mobile/agendamento_mobile.html')
+#================agend_educacao==========================
+@app.route('/mobile/educacao')
+def mobile_educacao():
+
+    return render_template('mobile/agendamento_educacao.html')
+#================agend_tributario========================
+@app.route('/mobile/tributario')
+def mobile_tributario():
+
+    return render_template('mobile/agendamento_tributario.html')
+#========gravar dados do agendamento============
+@app.route('/mobile/agendar', methods=['POST'])
+def mobile_agendar():
+
+    nome = request.form.get('nome')
+    cpf = request.form.get('cpf')
+    especialidade = request.form.get('especialidade')
+    data = request.form.get('data')
+    horario = request.form.get('horario')
+
+    return f"""
+    Agendamento realizado com sucesso!<br><br>
+
+    Nome: {nome}<br>
+    CPF: {cpf}<br>
+    Especialidade: {especialidade}<br>
+    Data: {data}<br>
+    Horário: {horario}
+    """
 
 # =========================
 # FINAL
