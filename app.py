@@ -747,15 +747,105 @@ def mobile_agendar():
     data = request.form.get('data')
     horario = request.form.get('horario')
 
-    return f"""
-    Agendamento realizado com sucesso!<br><br>
+    prioridade_origem = int(request.form.get('prioridade', 8))
 
-    Nome: {nome}<br>
-    CPF: {cpf}<br>
-    Especialidade: {especialidade}<br>
-    Data: {data}<br>
-    Horário: {horario}
-    """
+    setor = "saude"
+
+    # detectar setor automaticamente
+    if especialidade in [
+        'matriculas',
+        'documentos',
+        'transporte',
+        'creches',
+        'inclusao',
+        'geral'
+    ]:
+        setor = "educacao"
+
+    elif especialidade in [
+        'iptu',
+        'iss',
+        'alvara',
+        'divida',
+        'certidoes',
+        'cadastro'
+    ]:
+        setor = "tributario"
+
+    prefixos = {
+        1: "I+",
+        2: "G",
+        3: "L",
+        4: "C",
+        5: "T",
+        6: "D",
+        7: "I",
+        8: "N"
+    }
+
+    nomes = {
+        1: "Idoso 80+",
+        2: "Gestante",
+        3: "Lactante",
+        4: "Criança de Colo",
+        5: "TEA",
+        6: "Deficiente",
+        7: "Idoso",
+        8: "Normal"
+    }
+
+    pesos = {
+        1: 5,
+        5: 4,
+        6: 4,
+        7: 4,
+        2: 3,
+        3: 3,
+        4: 3,
+        8: 1
+    }
+
+    codigo = obter_proximo_codigo(
+        prefixos[prioridade_origem],
+        setor
+    )
+
+    db = Session()
+
+    try:
+
+        nova = Senha(
+            senha=codigo,
+            tipo=nomes[prioridade_origem],
+            prioridade=pesos[prioridade_origem],
+            status="aguardando",
+            setor=setor,
+            servico=especialidade,
+            origem="remoto",
+            nome_paciente=nome
+        )
+
+        db.add(nova)
+        db.commit()
+
+        return f"""
+        <h2>Agendamento realizado com sucesso!</h2>
+
+        <p><strong>Senha:</strong> {codigo}</p>
+        <p><strong>Nome:</strong> {nome}</p>
+        <p><strong>Setor:</strong> {setor}</p>
+        <p><strong>Serviço:</strong> {especialidade}</p>
+        <p><strong>Data:</strong> {data}</p>
+        <p><strong>Horário:</strong> {horario}</p>
+        """
+
+    except Exception as e:
+
+        db.rollback()
+        return f"Erro: {str(e)}"
+
+    finally:
+        db.close()
 
 # =========================
 # FINAL

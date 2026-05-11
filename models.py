@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Enum, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Enum, DateTime, ForeignKey, Boolean
 from sqlalchemy.sql import func
 from sqlalchemy.orm import declarative_base
 
@@ -32,6 +32,10 @@ class Senha(Base):
     prioridade = Column(Integer, default=1)
 
     status = Column(String(20), default='aguardando')
+
+    origem = Column(String(20))
+    horario_agendado = Column(DateTime)
+    confirmado = Column(Boolean, default=False)
 
     data_emissao = Column(DateTime, server_default=func.now())
     data_inicio_atendimento = Column(DateTime)
