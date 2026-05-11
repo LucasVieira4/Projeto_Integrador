@@ -5,6 +5,8 @@ from models import Base, Senha, Usuario
 from datetime import datetime
 from flask_cors import CORS
 
+import requests
+
 # =========================
 # CONFIGURAÇÃO
 # =========================
@@ -73,6 +75,92 @@ def obter_fila_ordenada(prioritarios, normais, total_ja_chamados=0):
 # APIs
 # =========================
 
+#=======COTAÇÃO DOLAR======
+@app.route('/api/dolar')
+def api_dolar():
+    try:
+        url = "https://economia.awesomeapi.com.br/json/last/USD-BRL"
+
+        response = requests.get(url)
+        dados = response.json()
+
+        valor = dados['USDBRL']['bid']
+        variacao = dados['USDBRL']['pctChange']
+
+        return jsonify({
+            'valor': valor,
+            'variacao': variacao
+        })
+
+    except Exception as e:
+        return jsonify({
+            'erro': str(e)
+        }), 500
+#=====Noticias Regionais====
+@app.route('/api/noticias')
+def api_noticias():
+
+    try:
+
+        API_KEY = "047b1a364668e9439332c6e9412bc505"
+
+        url = f"https://gnews.io/api/v4/top-headlines?lang=pt&country=br&max=3&apikey={API_KEY}"
+
+        response = requests.get(url)
+
+        dados = response.json()
+
+        noticias = []
+
+        for noticia in dados['articles']:
+
+            noticias.append({
+                'titulo': noticia['title']
+            })
+
+        return jsonify(noticias)
+
+    except Exception as e:
+
+        return jsonify({
+            'erro': str(e)
+        }), 500
+#=======Climatempo==========
+@app.route('/api/clima')
+def api_clima():
+
+    try:
+
+        # Coordenadas de São Paulo
+        latitude = -23.55
+        longitude = -46.63
+
+        url = (
+            f"https://api.open-meteo.com/v1/forecast"
+            f"?latitude={latitude}"
+            f"&longitude={longitude}"
+            f"&current=temperature_2m"
+        )
+
+        response = requests.get(url)
+
+        dados = response.json()
+
+        temperatura = dados['current']['temperature_2m']
+
+        return jsonify({
+
+            'cidade': 'São Paulo',
+            'temperatura': temperatura,
+            'descricao': 'Tempo atualizado'
+
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            'erro': str(e)
+        }), 500
 #=====Painel Chamadas=======
 
 @app.route('/api/painel_completo')
