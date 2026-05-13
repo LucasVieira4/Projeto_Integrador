@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmação</title>
+    <link rel="stylesheet"href="{{ url_for('static', filename='css/confirmacao.css') }}">
+</head>
+<body>
+<div class="card">
+
+    <div class="icone">&#10004;</div>
+    <h1>Agendamento Confirmado</h1>
+    <p>Seu atendimento foi agendado com sucesso</p>
+
+    <div class="info">
+        <p><strong>Senha:</strong> {{ codigo }}</p>
+        <p><strong>Setor:</strong> {{ setor }}</p>
+        <p><strong>Serviço:</strong> {{ especialidade }}</p>
+        <p><strong>Data:</strong> {{ data }}</p>
+        <p><strong>Horário:</strong> {{ horario }}</p>
+    </div>
+
+    <a href="/mobile/logout" class="finalizar">Finalizar</a>
+
+</div>
+
+</body>
+</html>

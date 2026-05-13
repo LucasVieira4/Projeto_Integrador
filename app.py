@@ -916,16 +916,15 @@ def mobile_agendar():
         db.add(nova)
         db.commit()
 
-        return f"""
-        <h2>Agendamento realizado com sucesso!</h2>
-
-        <p><strong>Senha:</strong> {codigo}</p>
-        <p><strong>Nome:</strong> {nome}</p>
-        <p><strong>Setor:</strong> {setor}</p>
-        <p><strong>Serviço:</strong> {especialidade}</p>
-        <p><strong>Data:</strong> {data}</p>
-        <p><strong>Horário:</strong> {horario}</p>
-        """
+        return render_template(
+            'mobile/confirmacao.html',
+            codigo=codigo,
+            nome=nome,
+            setor=setor,
+            especialidade=especialidade,
+            data=data,
+            horario=horario
+        )
 
     except Exception as e:
 
@@ -934,7 +933,57 @@ def mobile_agendar():
 
     finally:
         db.close()
+#=====mobile-logout========
+@app.route('/mobile/logout')
+def mobile_logout():
 
+    session.clear()
+
+    return """
+    <html>
+    <head>
+        <title>Sessão Encerrada</title>
+
+        <style>
+
+        body{
+            font-family:Arial;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+            background:#f5f5f5;
+        }
+
+        .card{
+            background:white;
+            padding:40px;
+            border-radius:20px;
+            text-align:center;
+            box-shadow:0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            color:green;
+        }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div class="card">
+
+            <h1>Sessão Finalizada</h1>
+
+            <p>Obrigado por utilizar o QMS.</p>
+
+        </div>
+
+    </body>
+    </html>
+    """
 # =========================
 # FINAL
 # =========================
