@@ -45,9 +45,17 @@ h1 {
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.edu-border { border-color: #3498db; }
-.sau-border { border-color: #e74c3c; }
-.tri-border { border-color: #2ecc71; }
+.aguardando-border {
+    border-color: #f39c12;
+}
+
+.atendimento-border {
+    border-color: #3498db;
+}
+
+.finalizado-border {
+    border-color: #2ecc71;
+}
 
 .card h3 {
     color: #7f8c8d;
